@@ -1,0 +1,2 @@
+Với những product card thì hiển thị giá như thế nào 
+giá sỉ, giá lẻ, giá gốc, giá sau giảm giá?

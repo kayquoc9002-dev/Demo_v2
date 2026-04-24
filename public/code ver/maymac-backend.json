@@ -1,0 +1,541 @@
+{
+  "info": {
+    "name": "MayMac Pro — API Collection",
+    "_postman_id": "maymac-api-collection-v1",
+    "description": "Toàn bộ API backend: Auth, HR, Khách hàng, Nhà phân phối, Đối tác",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Đăng nhập",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "  console.log('✅ Token saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👥 HR — Nhân viên",
+      "item": [
+        {
+          "name": "Lấy danh sách nhân viên",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/hr/employees?q=&limit=20",
+              "host": ["{{base_url}}"], "path": ["hr", "employees"],
+              "query": [
+                { "key": "q", "value": "", "description": "Tìm theo tên" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Thêm nhân viên",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nguyễn Văn A\",\n  \"gender\": \"Nam\",\n  \"phone\": \"0901234567\",\n  \"email\": \"nva@maymac.pro\",\n  \"startDate\": \"2024-01-01\",\n  \"departmentId\": 1,\n  \"positionId\": 1\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/employees", "host": ["{{base_url}}"], "path": ["hr", "employees"] }
+          }
+        },
+        {
+          "name": "Cập nhật nhân viên",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nguyễn Văn A (Updated)\",\n  \"phone\": \"0909999999\",\n  \"email\": \"nva_new@maymac.pro\",\n  \"departmentId\": 1,\n  \"positionId\": 2\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/employees/:id", "host": ["{{base_url}}"], "path": ["hr", "employees", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Nghỉ việc nhân viên",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resignDate\": \"2024-12-31\",\n  \"reason\": \"Xin nghỉ việc\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/employees/:id/resign", "host": ["{{base_url}}"], "path": ["hr", "employees", ":id", "resign"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏢 HR — Phòng ban",
+      "item": [
+        {
+          "name": "Lấy danh sách phòng ban",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/hr/departments", "host": ["{{base_url}}"], "path": ["hr", "departments"] }
+          }
+        },
+        {
+          "name": "Tạo phòng ban",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Phòng Sản xuất\",\n  \"description\": \"Quản lý sản xuất\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/departments", "host": ["{{base_url}}"], "path": ["hr", "departments"] }
+          }
+        },
+        {
+          "name": "Xóa phòng ban",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/hr/departments/:id", "host": ["{{base_url}}"], "path": ["hr", "departments", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏷️ HR — Chức vụ & Role",
+      "item": [
+        {
+          "name": "Lấy danh sách chức vụ",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/hr/positions", "host": ["{{base_url}}"], "path": ["hr", "positions"] }
+          }
+        },
+        {
+          "name": "Tạo chức vụ",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Trưởng phòng\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/positions", "host": ["{{base_url}}"], "path": ["hr", "positions"] }
+          }
+        },
+        {
+          "name": "Lấy danh sách role",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/hr/roles", "host": ["{{base_url}}"], "path": ["hr", "roles"] }
+          }
+        },
+        {
+          "name": "Tạo role",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kế toán\",\n  \"permissions\": [\"view_customers\", \"view_distributors\"]\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/roles", "host": ["{{base_url}}"], "path": ["hr", "roles"] }
+          }
+        },
+        {
+          "name": "Cập nhật role (permissions)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kế toán\",\n  \"permissions\": [\"view_customers\", \"manage_customers\", \"view_distributors\"]\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/roles/:id", "host": ["{{base_url}}"], "path": ["hr", "roles", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Gán role cho nhân viên",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"roleId\": 2\n}"
+            },
+            "url": { "raw": "{{base_url}}/hr/roles/assign", "host": ["{{base_url}}"], "path": ["hr", "roles", "assign"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🛒 Khách hàng",
+      "item": [
+        {
+          "name": "Lấy danh sách",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/service/khachhang?q=&loai=&trangThai=",
+              "host": ["{{base_url}}"], "path": ["service", "khachhang"],
+              "query": [
+                { "key": "q", "value": "", "description": "Tìm theo tên / mã" },
+                { "key": "loai", "value": "", "description": "B2B | ThoiTrang | CaNhan" },
+                { "key": "trangThai", "value": "", "description": "active | inactive" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Chi tiết",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/service/khachhang/:id", "host": ["{{base_url}}"], "path": ["service", "khachhang", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Tạo KH B2B",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loai\": \"B2B\",\n  \"tenDoanhNghiep\": \"Công ty TNHH ABC\",\n  \"linhVucHoatDong\": \"Thời trang\",\n  \"diaChi\": \"123 Nguyễn Văn Linh, HCM\",\n  \"nguoiPhuTrach\": \"Nguyễn Thị B\",\n  \"email\": \"abc@company.com\",\n  \"sdt\": \"0901111222\",\n  \"batDauHopTac\": \"2023-01-01\",\n  \"loaiSanPham\": \"Đồng phục văn phòng\",\n  \"soLuongMoiDon\": 500,\n  \"soLuongDonNam\": 4,\n  \"tongSanLuongNam\": 2000,\n  \"yeuCauKyThuat\": null,\n  \"yeuCauLogo\": \"In logo trực tiếp lên áo\",\n  \"yeuCauBaobi\": null,\n  \"thoiGianGiaoHang\": \"21 ngày\",\n  \"dieuKhoanThanhToan\": \"Net 30\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/khachhang", "host": ["{{base_url}}"], "path": ["service", "khachhang"] }
+          }
+        },
+        {
+          "name": "Tạo KH Thời trang",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loai\": \"ThoiTrang\",\n  \"tenThuongHieu\": \"Brand XYZ\",\n  \"email\": \"hello@brandxyz.com\",\n  \"sdt\": \"0902222333\",\n  \"nguoiPhuTrach\": \"Trần Văn C\",\n  \"batDauHopTac\": \"2024-03-01\",\n  \"phanKhuc\": \"Mid-range\",\n  \"thiTruongChinh\": \"Miền Nam\",\n  \"hinhThucHopTac\": \"Gia công theo mẫu\",\n  \"soLuongMoiBST\": 200,\n  \"tanSuatBSTNam\": 4,\n  \"yeuCauBaoMat\": \"Ký NDA\",\n  \"tieuChuanKiemHang\": \"AQL 2.5\",\n  \"yeuCauTestCoRutMau\": \"Wash 3 lần\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/khachhang", "host": ["{{base_url}}"], "path": ["service", "khachhang"] }
+          }
+        },
+        {
+          "name": "Tạo KH Cá nhân",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loai\": \"CaNhan\",\n  \"hoTen\": \"Lê Thị D\",\n  \"email\": \"ltd@gmail.com\",\n  \"sdt\": \"0903333444\",\n  \"sanPhamDatMay\": \"Váy cưới\",\n  \"soLuong\": 1,\n  \"yeuCauThietKe\": \"Thiết kế theo ý khách\",\n  \"yeuCauChinhSua\": null,\n  \"thoiGianGiao\": \"2024-06-15\",\n  \"giaTriDonHang\": 5000000\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/khachhang", "host": ["{{base_url}}"], "path": ["service", "khachhang"] }
+          }
+        },
+        {
+          "name": "Cập nhật",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenDoanhNghiep\": \"Công ty TNHH ABC (Updated)\",\n  \"sdt\": \"0909999999\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/khachhang/:id", "host": ["{{base_url}}"], "path": ["service", "khachhang", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Đổi trạng thái",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trangThai\": \"inactive\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/khachhang/:id/status", "host": ["{{base_url}}"], "path": ["service", "khachhang", ":id", "status"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Xóa",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/service/khachhang/:id", "host": ["{{base_url}}"], "path": ["service", "khachhang", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏭 Nhà phân phối",
+      "item": [
+        {
+          "name": "Lấy danh sách",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/service/nhaphanphoi?q=&trangThai=",
+              "host": ["{{base_url}}"], "path": ["service", "nhaphanphoi"],
+              "query": [
+                { "key": "q", "value": "", "description": "Tìm theo tên / mã / người phụ trách" },
+                { "key": "trangThai", "value": "", "description": "active | tamNgung | ketThuc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Chi tiết",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/service/nhaphanphoi/:id", "host": ["{{base_url}}"], "path": ["service", "nhaphanphoi", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Tạo mới",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenCongTy\": \"Công ty Phân phối Miền Nam\",\n  \"nguoiPhuTrach\": \"Phạm Văn E\",\n  \"chucVuLienHe\": \"Giám đốc kinh doanh\",\n  \"email\": \"phanphoi@mn.com\",\n  \"sdt\": \"0281234567\",\n  \"website\": \"https://phanphoiMN.com\",\n  \"quocGiaKhuVuc\": \"Việt Nam\",\n  \"diaChiTruSo\": \"456 Lê Văn Việt, TP.HCM\",\n  \"diaChiKho\": \"KCN Bình Dương\",\n  \"namBatDauHopTac\": 2020,\n  \"thoiHanHopDong\": \"3 năm\",\n  \"trangThai\": \"active\",\n  \"phanPhoiDocQuyen\": \"Không độc quyền\",\n  \"phanPhoiKhuVuc\": \"[\\\"Miền Nam\\\"]\",\n  \"phanPhoiNganhHang\": \"[\\\"Đồng phục\\\",\\\"Thời trang\\\"]\",\n  \"hinhThucBanHang\": \"[\\\"Sỉ\\\",\\\"Đại lý cấp 1\\\"]\",\n  \"coDaiLyCon\": \"Có\",\n  \"soLuongDaiLy\": 12,\n  \"kenhPhanPhoi\": \"[\\\"Offline\\\",\\\"Showroom\\\"]\",\n  \"dienTichKho\": 2000,\n  \"sucChuaToiDa\": \"50,000 sp\",\n  \"sanLuongTieuThuThang\": 10000,\n  \"sanLuongTieuThuNam\": 120000,\n  \"khaNangGiaoHangNgay\": 50,\n  \"thoiGianXuLyDon\": \"24 giờ\",\n  \"doiNguNhanSu\": \"8 sale, 4 vận hành, 10 kho\",\n  \"phuongTienVanChuyen\": \"5 xe tải\",\n  \"coHeThongWMS\": \"Có\",\n  \"chinhSachChietKhau\": \"10-15% theo sản lượng\",\n  \"chinhSachCongNo\": \"Công nợ tối đa 30 ngày\",\n  \"thoiHanThanhToan\": \"Net 30\",\n  \"mucTonKhoToiThieu\": \"500 sp/SKU\",\n  \"chinhSachDoiTra\": \"Đổi trong 7 ngày nếu lỗi sản xuất\",\n  \"dieuKhoanBaoHanh\": \"6 tháng\",\n  \"dieuKhoanBaoMat\": \"Ký NDA\",\n  \"dieuKhoanChamDut\": \"Báo trước 30 ngày\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/nhaphanphoi", "host": ["{{base_url}}"], "path": ["service", "nhaphanphoi"] }
+          }
+        },
+        {
+          "name": "Cập nhật",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenCongTy\": \"Công ty Phân phối Miền Nam (Updated)\",\n  \"sdt\": \"0289999999\",\n  \"dienTichKho\": 2500\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/nhaphanphoi/:id", "host": ["{{base_url}}"], "path": ["service", "nhaphanphoi", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Đổi trạng thái",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trangThai\": \"tamNgung\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/nhaphanphoi/:id/status", "host": ["{{base_url}}"], "path": ["service", "nhaphanphoi", ":id", "status"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Xóa",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/service/nhaphanphoi/:id", "host": ["{{base_url}}"], "path": ["service", "nhaphanphoi", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🤝 Đối tác",
+      "item": [
+        {
+          "name": "Lấy danh sách",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/service/doitac?q=&loai=&trangThai=",
+              "host": ["{{base_url}}"], "path": ["service", "doitac"],
+              "query": [
+                { "key": "q", "value": "", "description": "Tìm theo tên / mã" },
+                { "key": "loai", "value": "", "description": "CungUng | GiaCong | ThietKe" },
+                { "key": "trangThai", "value": "", "description": "active | inactive" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Chi tiết",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/service/doitac/:id", "host": ["{{base_url}}"], "path": ["service", "doitac", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Tạo — Cung ứng NPL",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loai\": \"CungUng\",\n  \"tenNhaCungCap\": \"Vải Đại Thành\",\n  \"quocGiaXuatXu\": \"Việt Nam\",\n  \"diaChiNhaMay\": \"KCN Nhơn Trạch, Đồng Nai\",\n  \"namThanhLap\": 2005,\n  \"namBatDauHopTac\": 2021,\n  \"chungNhanChatLuong\": \"ISO 9001, OEKO-TEX\",\n  \"nangLucSanXuatThang\": \"500,000m vải/tháng\",\n  \"vai\": \"Cotton 100%, CVC, Poly\",\n  \"chiMay\": null,\n  \"cubNutDayKeo\": null,\n  \"temNhan\": null,\n  \"baoBiDongGoi\": null,\n  \"phuLieuTrangTri\": null,\n  \"hoaChatGiat\": null,\n  \"coPhongLab\": \"Có\",\n  \"tyLeLoi\": 0.5,\n  \"thoiGianGiaoHang\": \"7-10 ngày\",\n  \"chinhSachDoiTra\": \"Đổi trong 3 ngày nếu lỗi vải\",\n  \"kiemTraMauTruoc\": \"Có\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/doitac", "host": ["{{base_url}}"], "path": ["service", "doitac"] }
+          }
+        },
+        {
+          "name": "Tạo — Gia công",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loai\": \"GiaCong\",\n  \"tenXuong\": \"Xưởng May Thành Công\",\n  \"diaChiXuong\": \"123 Bình Chánh, TP.HCM\",\n  \"soLuongChuyen\": 8,\n  \"soLuongCongNhan\": 120,\n  \"congSuatNgay\": 800,\n  \"congSuatThang\": 20000,\n  \"loaiSanPham\": \"Áo thun, polo, đồng phục\",\n  \"coPhongQC\": \"Có\",\n  \"mayMay1Kim\": 40,\n  \"mayMay2Kim\": 20,\n  \"mayVatSo\": 15,\n  \"mayKansai\": 8,\n  \"mayThuaKhuy\": 4,\n  \"mayDinhNut\": 4,\n  \"mayInChuyenNhiet\": 2,\n  \"mayTheuViTinh\": 3,\n  \"mayGiatCongNghiep\": 2,\n  \"tyLeLoi\": 1.2,\n  \"quyTrinh3Buoc\": \"Inline / Final / Packing\",\n  \"tieuChuanMay\": \"ISO 9001\",\n  \"datAuditKhachHang\": \"Có\",\n  \"kinhNghiemXuatKhau\": \"Có\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/doitac", "host": ["{{base_url}}"], "path": ["service", "doitac"] }
+          }
+        },
+        {
+          "name": "Tạo — Thiết kế",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loai\": \"ThietKe\",\n  \"tenStudio\": \"Studio Sáng Tạo\",\n  \"linhVucChuyenMon\": \"Đồng phục, Streetwear\",\n  \"soNamKinhNghiem\": 7,\n  \"duAnDaThucHien\": \"Đồng phục FPT 2022, BST Xuân Hè 2023 cho Brand ABC\",\n  \"khaNangThietKeRap\": \"Có\",\n  \"khaNangLamMauThu\": \"Có\",\n  \"thoiGianHoanThanh\": \"5-7 ngày/mẫu\",\n  \"phanMemSuDung\": \"Gerber, Clo3D\",\n  \"quyTrinhDuyetMau\": \"[{\\\"stt\\\":1,\\\"buoc\\\":\\\"Phác thảo ý tưởng\\\"},{\\\"stt\\\":2,\\\"buoc\\\":\\\"Vẽ kỹ thuật\\\"},{\\\"stt\\\":3,\\\"buoc\\\":\\\"Làm mẫu thử\\\"},{\\\"stt\\\":4,\\\"buoc\\\":\\\"Khách duyệt\\\"},{\\\"stt\\\":5,\\\"buoc\\\":\\\"Chỉnh sửa & hoàn thiện\\\"}]\",\n  \"chinhSachBaoMat\": \"Ký NDA trước khi chia sẻ thiết kế\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/doitac", "host": ["{{base_url}}"], "path": ["service", "doitac"] }
+          }
+        },
+        {
+          "name": "Cập nhật",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenNhaCungCap\": \"Vải Đại Thành (Updated)\",\n  \"tyLeLoi\": 0.3\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/doitac/:id", "host": ["{{base_url}}"], "path": ["service", "doitac", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Đổi trạng thái",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trangThai\": \"inactive\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/service/doitac/:id/status", "host": ["{{base_url}}"], "path": ["service", "doitac", ":id", "status"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Xóa",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/service/doitac/:id", "host": ["{{base_url}}"], "path": ["service", "doitac", ":id"], "variable": [{ "key": "id", "value": "1" }] }
+          }
+        }
+      ]
+    }
+
+  ]
+}
