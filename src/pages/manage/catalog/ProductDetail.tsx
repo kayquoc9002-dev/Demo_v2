@@ -1203,7 +1203,7 @@ export default function ProductDetail() {
   } | null>(null);
 
   // Auto-save draft vào localStorage
-  const auto_save_timer = useRef<ReturnType<typeof setTimeout>>();
+  const auto_save_timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [last_saved, setLastSaved] = useState<Date | null>(null);
 
   useEffect(() => {

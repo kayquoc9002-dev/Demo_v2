@@ -1,18 +1,18 @@
 // GiaoHangPage_C.tsx — MH5: Tạo vận đơn (đơn lẻ + hàng loạt)
 import { useState, useEffect, useRef, useCallback } from 'react'
 import {
-  Package, Truck, Check, AlertTriangle, X,
-  Star, Zap, ChevronDown, Printer, Plus,
+  Package, Check,
+  Star, Printer,
   RefreshCw, CheckCircle, XCircle, Loader,
-  ExternalLink, Layers,
+  Layers,
 } from 'lucide-react'
 
 import type {
-  CarrierQuote, CreateShipmentResponse, BulkCreateItem,
+  CarrierQuote, CreateShipmentResponse,
 } from '../../../components/VanChuyen/data/shippingTypes'
 
 import {
-  getShippingQuote, createShipment, createBulkShipments,
+  getShippingQuote, createShipment,
 } from '../../../components/VanChuyen/service/shippingService'
 
 // ── Helpers ───────────────────────────────────────────────────────────────

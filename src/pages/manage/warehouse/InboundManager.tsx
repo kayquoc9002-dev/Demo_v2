@@ -1130,7 +1130,7 @@ function PanelPutAway({
   const [items, setItems] = useState<PutAwayItem[]>([]);
   const [scan_input, setScanInput] = useState("");
   const scan_ref = useRef<HTMLInputElement>(null);
-  const [sku_rules, setSkuRules] = useState<SkuLocationRule[]>([]);
+  const [, setSkuRules] = useState<SkuLocationRule[]>([]);
   const [nodes, setNodes] = useState<LocationNode[]>([]);
   const [warehouse_config, setWarehouseConfig] =
     useState<WarehouseConfig | null>(null);
@@ -1694,8 +1694,8 @@ export default function InboundManager() {
                     border: "1px solid #1e293b",
                   }}
                 >
-                  {// eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (
+                  {(
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     Object.entries(LOAI_PHIEU_CONFIG) as [LoaiPhieuNhap, any][]
                   ).map(([key, cfg]) => (
                     <button

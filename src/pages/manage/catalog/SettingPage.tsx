@@ -570,7 +570,7 @@ function TabDanhMuc() {
   const [is_new,      setIsNew]      = useState(false);
   const [confirm_xoa, setConfirm]    = useState<Category | null>(null);
   const [form, setForm] = useState({
-    category_code: "", name: "", parent_id: null as string | null, status: "active" as const,
+    category_code: "", name: "", parent_id: null as string | null, status: "active" as "active" | "inactive",
   });
 
   useEffect(() => { layDanhSachCategory().then(setCategories); }, []);
