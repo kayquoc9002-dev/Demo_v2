@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   TrendingUp,
   ShoppingBag,
@@ -10,11 +10,11 @@ import {
   Calendar,
 } from "lucide-react";
 import {
-  MOCK_DON_HANG,
   dinh_dang_tien,
   dinh_dang_tien_ngan,
   type DonHang,
 } from "../../../components/BanHang/data/orderData";
+import { layTatCaDonHang } from "../../../components/Kho/ServiceLayer/orderService";
 
 // ─── Helpers ──────────────────────────────────────────────
 const fmt = dinh_dang_tien;
@@ -214,27 +214,29 @@ export default function DoanhThu() {
   const [khoang, setKhoang] = useState<KhoangThoiGian>("thang_nay");
   const [ngay_tu, setNgayTu] = useState("");
   const [ngay_den, setNgayDen] = useState("");
+  const [don_hang, setDonHang] = useState<DonHang[]>([]);
+  useEffect(() => { layTatCaDonHang().then(setDonHang); }, []);
 
   // Lọc đơn hoàn thành theo khoảng thời gian
   const don_hoan_thanh = useMemo(
     () =>
-      MOCK_DON_HANG.filter(
+      don_hang.filter(
         (o) =>
           o.trang_thai_don === "hoan_thanh" &&
           loc_theo_tg(o, khoang, ngay_tu, ngay_den),
       ),
-    [khoang, ngay_tu, ngay_den],
+    [don_hang, khoang, ngay_tu, ngay_den],
   );
 
   // Tất cả đơn hoàn thành trong năm hiện tại (cho biểu đồ theo tháng)
   const don_nam = useMemo(
     () =>
-      MOCK_DON_HANG.filter(
+      don_hang.filter(
         (o) =>
           o.trang_thai_don === "hoan_thanh" &&
           new Date(o.ngay_tao).getFullYear() === new Date().getFullYear(),
       ),
-    [],
+    [don_hang],
   );
 
   // ── Stats chính ──────────────────────────────────────────

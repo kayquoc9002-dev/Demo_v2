@@ -29,16 +29,60 @@ export const SIDEBAR_TOP_MENU = [
     path: "/manage",
   },
   {
-    id: "thu-chi",
-    label: "Thu Chi",
+    id: "ke-toan",
+    label: "Kế toán",
     icon: <Wallet size={20} />,
-    path: "/manage/thu-chi",
+    path: "/manage/ke-toan",
+    subItems: [
+      {
+        label: "Tổng quan",
+        path: "/manage/ke-toan",
+        icon: <ClipboardList size={14} />,
+      },
+      {
+        label: "Sổ quỹ",
+        path: "/manage/ke-toan/so-quy",
+        icon: <ClipboardList size={14} />,
+      },
+      {
+        label: "Công nợ",
+        path: "/manage/ke-toan/cong-no",
+        icon: <ClipboardList size={14} />,
+      },
+      {
+        label: "Doanh thu",
+        path: "/manage/ke-toan/doanh-thu",
+        icon: <ClipboardList size={14} />,
+      }
+    ]
   },
   {
-    id: "mua-hang",
-    label: "Mua hàng",
+    id: "thu-mua",
+    label: "Thu mua",
     icon: <ShoppingCart size={20} />,
-    path: "/manage/mua-hang",
+    path: "/manage/thu-mua",
+    subItems: [
+      {
+        label: "Mua hàng",
+        path: "/manage/thu-mua",
+        icon: <ClipboardList size={14} />,
+      },
+      {
+        label: "Nhà cung cấp",
+        path: "/manage/thu-mua/nha-cung-cap",
+        icon: <ClipboardList size={14} />,
+      },
+      // {
+      //   label: "Đặt hàng",
+      //   path: "/manage/mua-hang/dat-hang",
+      //   icon: <ClipboardList size={14} />,
+      // },
+      // {
+      //   label: "Tracking",
+      //   path: "/manage/mua-hang/tracking",
+      //   icon: <ClipboardList size={14} />,
+      // }
+    ]
   },
   {
     id: "ban-hang",
@@ -75,30 +119,30 @@ export const SIDEBAR_TOP_MENU = [
     path: "/manage/kho",
     subItems: [
       {
+        id: "tong-quan",
         label: "Tổng quan kho",
         path: "/manage/kho/dashboard",
         icon: <ClipboardList size={14} />,
       },
       {
-        label: "Nhập/Xuất kho",
-        path: "/manage/kho/nhap-xuat",
-        icon: <TrendingUp size={14} />,
-      },
-      {
+        id: "nhap-kho",
         label: "Nhập kho",
         path: "/manage/kho/nhap-kho",
         icon: <TrendingUp size={14} />,
       },
       {
+        id: "xuat-kho",
         label: "Xuất kho",
         path: "/manage/kho/xuat-kho",
         icon: <TrendingUp size={14} />,
+        hoverPopup: false,
       },
       {
         id: "so-do-kho",
         label: "Sơ đồ kho",
         path: "/manage/kho/so-do-kho",
         icon: <TrendingUp size={14} />,
+        hoverPopup: true,
         subItems: [
           {
             label: "Vị trí hàng",
@@ -110,6 +154,18 @@ export const SIDEBAR_TOP_MENU = [
           },
         ],
       },
+      {
+        id: "tom-kho",
+        label: "Tồn kho",
+        path: "/manage/kho/ton-kho",
+        icon: <TrendingUp size={14} />,
+      },
+      {
+        id: "hoan-hang",
+        label: "Hoàn hàng",
+        path: "/manage/kho/hoan-hang",
+        icon: <TrendingUp size={14} />,
+      },
     ],
   },
   {
@@ -117,6 +173,20 @@ export const SIDEBAR_TOP_MENU = [
     label: "Danh mục sản phẩm",
     icon: <List size={20} />,
     path: "/manage/danh-muc",
+    subItems: [
+      {
+        // id: "tong-quan",
+        label: "Sản phẩm",
+        path: "/manage/danh-muc/danh-sach-san-pham",
+        icon: <ClipboardList size={14} />,
+      },
+      {
+        // id: "tong-quan",
+        label: "Thiết lập",
+        path: "/manage/danh-muc/thiet-lap",
+        icon: <ClipboardList size={14} />,
+      }
+    ]
   },
   {
     id: "san-xuat",
@@ -129,6 +199,16 @@ export const SIDEBAR_TOP_MENU = [
     label: "Giao hàng",
     icon: <Truck size={20} />,
     path: "/manage/giao-hang",
+    subItems: [
+      {
+        label: "Danh mục vận chuyển",
+        path: "/manage/giao-hang/danh-muc-van-chuyen",
+      },
+      {
+        label: "Giao hàng",
+        path: "/manage/giao-hang",
+      },
+    ]
   },
   {
     id: "thanh-toan",

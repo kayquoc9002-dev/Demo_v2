@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Warehouse,
   Settings,
@@ -28,9 +28,9 @@ import {
 } from "../../../components/Kho/data/warehouseHelpers";
 import { tao_node_moi } from "../../../components/Kho/data/warehouseStore";
 import {
-  MOCK_WAREHOUSE_CONFIG,
-  MOCK_NODES,
-} from "../../../components/Kho/data/warehouseMockData";
+  layWarehouseConfig,
+  layDanhSachNodes,
+} from "../../../components/Kho/ServiceLayer/WarehouseService";
 import { NodeCard } from "../../../components/Kho/SoDoKho/NodeCard";
 import { NodeForm } from "../../../components/Kho/SoDoKho/NodeForm";
 import { LevelManager } from "../../../components/Kho/SoDoKho/LevelManager";
@@ -154,8 +154,12 @@ function TreeLevel({
 type RightPanel = "none" | "form" | "print" | "levels" | "detail";
 
 export default function WarehouseLayout() {
-  const [config, setConfig] = useState<WarehouseConfig>(MOCK_WAREHOUSE_CONFIG);
-  const [nodes, setNodes] = useState<LocationNode[]>(MOCK_NODES);
+  const [config, setConfig] = useState<WarehouseConfig>({ id: "", ten_kho: "", dia_chi: "", mo_ta: "", levels: [], ngay_tao: "" });
+  const [nodes, setNodes]   = useState<LocationNode[]>([]);
+  useEffect(() => {
+    layWarehouseConfig().then(setConfig);
+    layDanhSachNodes().then(setNodes);
+  }, []);
   const [selected_id, setSelectedId] = useState<string | null>(null);
   const [expanded_ids, setExpandedIds] = useState<Set<string>>(
     new Set(["n-A", "n-B"]),
@@ -193,6 +197,7 @@ export default function WarehouseLayout() {
   const toggle_expand = (id: string) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
+      
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });

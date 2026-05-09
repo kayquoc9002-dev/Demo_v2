@@ -1,7 +1,7 @@
 // SkuRuleManager.tsx — Module 2b: Thiết lập Quy tắc SKU ↔ Vị trí
 // Trang chính ghép: danh sách rules + form + cảnh báo tồn kho
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Plus,
   Search,
@@ -21,6 +21,7 @@ import type {
   SkuLocationRule,
   LocationNode,
   WarehouseLevel,
+  WarehouseConfig,
 } from "../../../components/Kho/data/warehouseTypes";
 import type {
   TonKhoCanhBao,
@@ -31,14 +32,14 @@ import {
   tinh_stats_rules,
   type SkuRuleFormData,
 } from "../../../components/Kho/data/skuRuleHelpers";
-import { MOCK_SKU_RULES } from "../../../components/Kho/data/warehouseMockData";
 import {
-  MOCK_NODES,
-  MOCK_WAREHOUSE_CONFIG,
-} from "../../../components/Kho/data/warehouseMockData";
+  layDanhSachSkuRules,
+  layDanhSachNodes,
+  layWarehouseConfig,
+} from "../../../components/Kho/ServiceLayer/WarehouseService";
 import { tinh_location_code } from "../../../components/Kho/data/warehouseHelpers";
 import { tao_sku_rule_moi } from "../../../components/Kho/data/warehouseStore";
-import { MOCK_SKU } from "./XuatNhapKho";
+import { MOCK_SKU } from "../../../components/Kho/data/productMockData"
 import type { SKUOption } from "../../../components/Kho/SoDoKho/SkuRuleForm";
 import { SkuRuleForm } from "../../../components/Kho/SoDoKho/SkuRuleForm";
 import { BreadcrumbPath } from "../../../components/Kho/SoDoKho/BreadcrumbPath";
@@ -58,8 +59,8 @@ function CanhBaoCard({
   levels: WarehouseLevel[];
 }) {
   const node = nodes.find((n) => n.id === cb.node_id);
-  const mau = cb.muc_do === "nguy_hiem" ? "#ef4444" : "#f59e0b";
-  const nen = cb.muc_do === "nguy_hiem" ? "#7f1d1d20" : "#78350f20";
+  const mau = cb.loai === "thieu" ? "#ef4444" : "#f59e0b";
+  const nen = cb.loai === "thieu" ? "#7f1d1d20" : "#78350f20";
 
   const pct =
     cb.dinh_muc_min > 0
@@ -132,9 +133,9 @@ function RuleRow({
   on_delete: (r: SkuLocationRule) => void;
 }) {
   const node = nodes.find((n) => n.id === rule.node_id);
-  const cb = canh_bao_map.get(rule.id);
+  const cb = canh_bao_map.get(`${rule.ma_sku}:${rule.node_id}`);
   const mau_cb =
-    cb?.muc_do === "nguy_hiem" ? "#ef4444" : cb ? "#f59e0b" : undefined;
+    cb?.loai === "thieu" ? "#ef4444" : cb ? "#f59e0b" : undefined;
 
   return (
     <div
@@ -227,9 +228,14 @@ function RuleRow({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function SkuRuleManager() {
-  const [rules, setRules] = useState<SkuLocationRule[]>(MOCK_SKU_RULES);
-  const [nodes] = useState<LocationNode[]>(MOCK_NODES);
-  const [config] = useState(MOCK_WAREHOUSE_CONFIG);
+  const [rules, setRules]   = useState<SkuLocationRule[]>([]);
+  const [nodes, setNodes]   = useState<LocationNode[]>([]);
+  const [config, setConfig] = useState<WarehouseConfig>({ id: "", ten_kho: "", dia_chi: "", mo_ta: "", levels: [], ngay_tao: "" });
+  useEffect(() => {
+    layDanhSachSkuRules().then(setRules);
+    layDanhSachNodes().then(setNodes);
+    layWarehouseConfig().then(setConfig);
+  }, []);
   const [show_form, setShowForm] = useState(false);
   const [editing, setEditing] = useState<SkuLocationRule | null>(null);
   const [search, setSearch] = useState("");
@@ -262,7 +268,7 @@ export default function SkuRuleManager() {
   );
 
   const canh_bao_map = useMemo(
-    () => new Map(canh_bao_list.map((cb) => [cb.rule_id, cb])),
+    () => new Map(canh_bao_list.map((cb) => [`${cb.ma_sku}:${cb.node_id}`, cb])),
     [canh_bao_list],
   );
 
@@ -283,8 +289,8 @@ export default function SkuRuleManager() {
       );
     }
     if (filter_cb) {
-      const canh_bao_rule_ids = new Set(canh_bao_list.map((cb) => cb.rule_id));
-      list = list.filter((r) => canh_bao_rule_ids.has(r.id));
+      const canh_bao_rule_ids = new Set(canh_bao_list.map((cb) => `${cb.ma_sku}:${cb.node_id}`));
+      list = list.filter((r) => canh_bao_rule_ids.has(`${r.ma_sku}:${r.node_id}`));
     }
     return list;
   }, [rules, search, filter_cb, canh_bao_list]);
@@ -304,7 +310,7 @@ export default function SkuRuleManager() {
   const toggle_sku = (ma: string) =>
     setExpandedSkus((prev) => {
       const n = new Set(prev);
-      n.has(ma) ? n.delete(ma) : n.add(ma);
+      if (n.has(ma)) n.delete(ma); else n.add(ma);
       return n;
     });
 
@@ -688,7 +694,7 @@ export default function SkuRuleManager() {
             ) : (
               canh_bao_list.map((cb) => (
                 <CanhBaoCard
-                  key={cb.rule_id}
+                  key={`${cb.ma_sku}:${cb.node_id}`}
                   cb={cb}
                   nodes={nodes}
                   levels={config.levels}

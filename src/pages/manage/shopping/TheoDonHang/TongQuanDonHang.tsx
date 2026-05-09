@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Clock, Package, Truck, AlertTriangle, RotateCcw,
   CheckCircle, Banknote, CreditCard, PhoneCall,
   TrendingUp, Users, Store, ChevronRight
 } from "lucide-react";
+import { layTatCaDonHang } from "../../../../components/Kho/ServiceLayer/orderService"
 import {
-  MOCK_DON_HANG,
   TRANG_THAI_DON_CONFIG,
   KENH_BAN_CONFIG,
   dinh_dang_tien,
@@ -489,7 +489,8 @@ function TongQuanAdmin({ ds_don, onCapNhat }: { ds_don: DonHang[]; onCapNhat: (d
 
 export default function TongQuanDonHang() {
   const vai_tro = VAI_TRO_HIEN_TAI;
-  const [ds_don, setDsDon] = useState<DonHang[]>(MOCK_DON_HANG);
+  const [ds_don, setDsDon] = useState<DonHang[]>([]);
+  useEffect(() => { layTatCaDonHang().then(setDsDon); }, []);
 
   const cap_nhat_don = (don_moi: DonHang) => {
     setDsDon(prev => prev.map(o => o.id === don_moi.id ? don_moi : o));

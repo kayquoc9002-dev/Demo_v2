@@ -12,8 +12,8 @@ import {
   Package,
   ChevronDown,
 } from "lucide-react";
+import { layTatCaDonHang } from "../../Kho/ServiceLayer/orderService";
 import {
-  MOCK_DON_HANG,
   TRANG_THAI_DON_CONFIG,
   TRANG_THAI_TT_CONFIG,
   KENH_BAN_CONFIG,
@@ -143,7 +143,8 @@ export default function XuLyDonHang() {
   const vai_tro = VAI_TRO_HIEN_TAI;
 
   // ── State bộ lọc ────────────────────────────────────────────────────────────
-  const [ds_don, setDsDon] = useState<DonHang[]>(MOCK_DON_HANG);
+  const [ds_don, setDsDon] = useState<DonHang[]>([]);
+  useEffect(() => { layTatCaDonHang().then(setDsDon); }, []);
   const [tim_kiem, setTimKiem] = useState("");
   const [tt_don, setTtDon] = useState<TrangThaiDon | "tat_ca">(
     BO_LOC_MAC_DINH[vai_tro].trang_thai_don,

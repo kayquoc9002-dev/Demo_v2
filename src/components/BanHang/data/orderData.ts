@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// orderData.ts — Types, mock data & helpers cho module Đơn hàng
+// orderData.ts — Types, interfaces, config, helpers & mock data cho module Đơn hàng
 // Naming: snake_case tiếng Việt, nhất quán với DB schema
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -106,11 +106,6 @@ export interface DonHang {
 }
 
 // ─── 3 View interfaces theo role ─────────────────────────────────────────────
-// TODO: Khi nối API thật, thay MOCK_DON_HANG bằng:
-//   Sale:    GET /api/don-hang?view=sale
-//   Kho:     GET /api/don-hang?view=kho
-//   KeToan:  GET /api/don-hang?view=ke_toan
-//   Admin:   GET /api/don-hang (full)
 
 /**
  * View Sale / CSKH
@@ -480,9 +475,9 @@ export const MOCK_DON_HANG: DonHang[] = [
       { trang_thai: "giao_that_bai",       thoi_gian: "2026-03-08T07:00:00", nguoi_thao_tac: "System", ghi_chu: "GHTK báo giao thất bại lần 2" },
     ],
   },
- 
+
   // ── Tuần này (04/04 – 15/04/2026) ────────────────────────────────────────────
- 
+
   {
     id: "11", ma_don: "DH-2026-0011",
     ngay_tao: "2026-04-15T08:10:00", ngay_cap_nhat: "2026-04-15T08:10:00",
@@ -664,9 +659,9 @@ export const MOCK_DON_HANG: DonHang[] = [
       { trang_thai: "dang_san_xuat", thoi_gian: "2026-04-06T16:00:00", nguoi_thao_tac: "Lan Anh" },
     ],
   },
- 
+
   // ── Tháng 3/2026 (đầu tháng) ──────────────────────────────────────────────────
- 
+
   {
     id: "21", ma_don: "DH-2026-0021",
     ngay_tao: "2026-03-25T09:00:00", ngay_cap_nhat: "2026-03-26T10:00:00",
@@ -764,9 +759,9 @@ export const MOCK_DON_HANG: DonHang[] = [
       { trang_thai: "hoan_thanh", thoi_gian: "2026-03-01T09:35:00", nguoi_thao_tac: "Thu Hà", ghi_chu: "Thanh toán tại quầy" },
     ],
   },
- 
+
   // ── Tháng 2/2026 ──────────────────────────────────────────────────────────────
- 
+
   {
     id: "26", ma_don: "DH-2026-0026",
     ngay_tao: "2026-02-25T09:00:00", ngay_cap_nhat: "2026-02-26T14:00:00",
@@ -879,9 +874,9 @@ export const MOCK_DON_HANG: DonHang[] = [
       { trang_thai: "hoan_thanh", thoi_gian: "2026-02-02T13:05:00", nguoi_thao_tac: "Thu Hà" },
     ],
   },
- 
+
   // ── Tháng 1/2026 ──────────────────────────────────────────────────────────────
- 
+
   {
     id: "32", ma_don: "DH-2026-0032",
     ngay_tao: "2026-01-28T09:00:00", ngay_cap_nhat: "2026-01-30T10:00:00",
@@ -977,143 +972,5 @@ export const MOCK_DON_HANG: DonHang[] = [
       { trang_thai: "dang_van_chuyen",     thoi_gian: "2026-01-06T11:00:00", nguoi_thao_tac: "Minh Tuấn" },
       { trang_thai: "hoan_thanh",          thoi_gian: "2026-01-07T14:00:00", nguoi_thao_tac: "System" },
     ],
-  }
+  },
 ];
-
-
-// ─── API layer ────────────────────────────────────────────────────────────────
-// Giai đoạn 1: trả về mock data
-// Giai đoạn 2: bỏ comment dòng fetch, xóa dòng return mock
-
-export const lay_danh_sach_don = async (
-  // vai_tro: VaiTro
-): Promise<DonHang[]> => {
-  // TODO: thay bằng API thật
-  // const res = await fetch(`/api/don-hang?view=${vai_tro}`)
-  // if (!res.ok) throw new Error("Lỗi tải danh sách đơn hàng")
-  // return res.json()
-  return MOCK_DON_HANG
-}
-
-export const lay_chi_tiet_don = async (id: string): Promise<DonHang> => {
-  // const res = await fetch(`/api/don-hang/${id}`)
-  // if (!res.ok) throw new Error("Không tìm thấy đơn hàng")
-  // return res.json()
-  const don = MOCK_DON_HANG.find(o => o.id === id)
-  if (!don) throw new Error("Không tìm thấy đơn hàng")
-  return don
-}
-
-export const cap_nhat_trang_thai_don = async (
-  id: string,
-  trang_thai: TrangThaiDon,
-  ghi_chu?: string
-): Promise<DonHang> => {
-  // const res = await fetch(`/api/don-hang/${id}/trang-thai`, {
-  //   method: "PATCH",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ trang_thai, ghi_chu })
-  // })
-  // return res.json()
-
-  // Mock: cập nhật tại chỗ
-  const don = MOCK_DON_HANG.find(o => o.id === id)
-  if (!don) throw new Error("Không tìm thấy đơn hàng")
-  don.trang_thai_don = trang_thai
-  don.ngay_cap_nhat  = new Date().toISOString()
-  don.lich_su.push({
-    trang_thai,
-    thoi_gian:      new Date().toISOString(),
-    nguoi_thao_tac: "Bạn",
-    ghi_chu,
-  })
-  return don
-}
-
-
-// ─── Phân quyền ──────────────────────────────────────────────────────────────
-
-/** Lọc fields của 1 đơn theo vai trò — ẩn data nhạy cảm */
-export const loc_don_theo_vai_tro = (
-  don: DonHang,
-  vai_tro: VaiTro
-): DonHangViewSale | DonHangViewKho | DonHangViewKeToan | DonHang => {
-
-  if (vai_tro === "kho") {
-    const result: DonHangViewKho = {
-      id:            don.id,
-      ma_don:        don.ma_don,
-      ngay_tao:      don.ngay_tao,
-      kenh_ban:      don.kenh_ban,
-      khach_hang: {
-        ten:           don.khach_hang.ten,
-        so_dien_thoai: don.khach_hang.so_dien_thoai,
-        dia_chi:       don.khach_hang.dia_chi,
-        thanh_pho:     don.khach_hang.thanh_pho,
-      },
-      san_pham: don.san_pham.map(({ ma_sku, ten_sp, mau_sac, kich_thuoc, vi_tri_ke, so_luong, so_luong_loi }) => ({
-        ma_sku, ten_sp, mau_sac, kich_thuoc, vi_tri_ke, so_luong, so_luong_loi,
-      })),
-      trang_thai_don:  don.trang_thai_don,
-      phuong_thuc_tt:  don.phuong_thuc_tt,
-      ma_van_don:      don.ma_van_don,
-      don_vi_vc:       don.don_vi_vc,
-      ma_kho:          don.ma_kho,
-      ghi_chu:         don.ghi_chu,
-      lich_su: don.lich_su.map(({ trang_thai, thoi_gian, ghi_chu }) => ({
-        trang_thai, thoi_gian, ghi_chu,
-      })),
-    }
-    return result
-  }
-
-  if (vai_tro === "ke_toan") {
-    const result: DonHangViewKeToan = {
-      id:                     don.id,
-      ma_don:                 don.ma_don,
-      ngay_tao:               don.ngay_tao,
-      ngay_cap_nhat:          don.ngay_cap_nhat,
-      kenh_ban:               don.kenh_ban,
-      khach_hang:             don.khach_hang,
-      san_pham: don.san_pham.map(({...rest }) => rest), // bỏ vi_tri_ke
-      trang_thai_don:         don.trang_thai_don,
-      trang_thai_thanh_toan:  don.trang_thai_thanh_toan,
-      phuong_thuc_tt:         don.phuong_thuc_tt,
-      ma_van_don:             don.ma_van_don,
-      tam_tinh:               don.tam_tinh,
-      chiet_khau:             don.chiet_khau,
-      phi_ship:               don.phi_ship,
-      tong_cong:              don.tong_cong,
-      da_thanh_toan:          don.da_thanh_toan,
-      con_no:                 don.con_no,
-      ghi_chu:                don.ghi_chu,
-      lich_su:                don.lich_su,
-    }
-    return result
-  }
-
-  if (vai_tro === "sale") {
-    const result: DonHangViewSale = {
-      ...don,
-      san_pham: don.san_pham.map(({...rest }) => rest), // bỏ gia_von + vi_tri_ke
-    }
-    return result
-  }
-
-  // admin — trả về đầy đủ
-  return don
-}
-
-/** Kiểm tra vai trò có được thực hiện thao tác không */
-export const co_quyen_thao_tac = (
-  vai_tro: VaiTro,
-  loai: "doi_trang_thai_don" | "doi_trang_thai_tt" | "xuat_excel" | "tao_don"
-): boolean => {
-  const quyen: Record<typeof loai, VaiTro[]> = {
-    doi_trang_thai_don: ["kho", "admin"],
-    doi_trang_thai_tt:  ["ke_toan", "admin"],
-    xuat_excel:         ["ke_toan", "admin"],
-    tao_don:            ["sale", "admin"],
-  }
-  return quyen[loai].includes(vai_tro)
-}

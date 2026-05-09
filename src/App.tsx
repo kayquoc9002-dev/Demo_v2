@@ -14,15 +14,24 @@ const DoiTacvaNhaPhanPhoi = lazy(
   () => import("./pages/manage/service/DoiTacvaNhaPhanPhoi"),
 );
 
+// ─── Thu chi ────────────────────────────────
+const ThuChi = lazy(
+  () => import("./pages/manage/accounting/AccountingDashboard"),
+);
+const SoQuy = lazy(() => import("./pages/manage/accounting/SoQuyPage"));
+const CongNo = lazy(() => import("./pages/manage/accounting/CongNoPage"));
+const DoanhThuChiPhi = lazy(() => import("./pages/manage/accounting/DoanhThuPage"));
+
 // ─── Quản lý kho ────────────────────────────────
 const Kho = lazy(() => import("./pages/manage/warehouse/KhoDashboard"));
-const NhapXuatKho = lazy(() => import("./pages/manage/warehouse/XuatNhapKho"));
 const NhapKho = lazy(() => import("./pages/manage/warehouse/InboundManager"));
 const XuatKho = lazy(() => import("./pages/manage/warehouse/OutboundManager"));
 const ViTriHang = lazy(
   () => import("./pages/manage/warehouse/WarehouseLayout"),
 );
 const QuanLySku = lazy(() => import("./pages/manage/warehouse/SkuRuleManager"));
+const TonKho = lazy(() => import("./pages/manage/warehouse/InventoryManager"));
+const HoanHang = lazy(() => import("./pages/manage/warehouse/ReturnsManager"));
 
 // ─── Bán hàng (nhân viên) ────────────────────────────────
 const TheoDonHang = lazy(
@@ -35,6 +44,26 @@ const POSBanLe = lazy(() => import("./pages/manage/shopping/POS/POSPage"));
 const ShopLayout = lazy(() => import("./layouts/ShopLayout"));
 const ShopProducts = lazy(() => import("./pages/shop/ShopProducts"));
 const ShopCart = lazy(() => import("./pages/shop/ShopCart"));
+
+// ─── Catalog ──────────────────────────────────────────
+const ProductList = lazy(() => import("./pages/manage/catalog/ProductList"));
+const ProductDetail = lazy(
+  () => import("./pages/manage/catalog/ProductDetail"),
+);
+const SettingCatalog = lazy(() => import("./pages/manage/catalog/SettingPage"));
+
+// ─── Purchase ──────────────────────────────────────────
+const PurchasePage = lazy(() => import("./pages/manage/purchase/PurchasePage"));
+const PRApproval = lazy(() => import("./components/MuaHang/PRApproval"));
+const POConsolidation = lazy(
+  () => import("./components/MuaHang/POConsolidation"),
+);
+const POTracking = lazy(() => import("./components/MuaHang/POTracking"));
+const NCC = lazy(() => import("./pages/manage/purchase/VendorPage"));
+
+// ─── Delivery ──────────────────────────────────────────
+const DanhMucVCPage = lazy(() => import("./pages/manage/delivery/DonViVanChuyenPage"));
+const GiaoHangPage = lazy(() => import("./pages/manage/delivery/GiaoHangPage"));
 
 const ShopSkeleton = () => (
   <div
@@ -146,6 +175,43 @@ function App() {
               </Suspense>
             }
           />
+
+          {/* Cụm thu chi */}
+          <Route path="ke-toan">
+            <Route
+              index
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <ThuChi />
+                </Suspense>
+              }
+            />
+            <Route
+              path="so-quy"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <SoQuy />
+                </Suspense>
+              }
+            />
+            <Route
+              path="cong-no"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <CongNo />
+                </Suspense>
+              }
+            />
+            <Route
+              path="doanh-thu"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <DoanhThuChiPhi />
+                </Suspense>
+              }
+            />
+          </Route>
+
           {/* Cụm bán hàng */}
           <Route path="ban-hang">
             <Route
@@ -187,14 +253,6 @@ function App() {
               }
             />
             <Route
-              path="nhap-xuat"
-              element={
-                <Suspense fallback={<PageSkeleton />}>
-                  <NhapXuatKho />
-                </Suspense>
-              }
-            />
-            <Route
               path="nhap-kho"
               element={
                 <Suspense fallback={<PageSkeleton />}>
@@ -228,6 +286,126 @@ function App() {
                 }
               />
             </Route>
+            <Route
+              path="ton-kho"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <TonKho />
+                </Suspense>
+              }
+            />
+            <Route
+              path="hoan-hang"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <HoanHang />
+                </Suspense>
+              }
+            />
+          </Route>
+
+          {/* Cụm danh mục sản phẩm */}
+          <Route path="danh-muc">
+            <Route
+              path="danh-sach-san-pham"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <ProductList />
+                </Suspense>
+              }
+            />
+            <Route path="san-pham">
+              <Route
+                path=":id"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <ProductDetail />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="tao-moi"
+                element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <ProductDetail />
+                  </Suspense>
+                }
+              />
+            </Route>
+            <Route
+              path="thiet-lap"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <SettingCatalog />
+                </Suspense>
+              }
+            />
+          </Route>
+
+          {/* Cụm danh mục sản phẩm */}
+          <Route path="thu-mua">
+            <Route
+              index
+              element={
+              <Suspense fallback={<PageSkeleton />}>
+                <PurchasePage />
+              </Suspense>
+            }
+            />
+            <Route
+              path="duyet-mua"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <PRApproval />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dat-hang"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <POConsolidation />
+                </Suspense>
+              }
+            />
+            <Route
+              path="tracking"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <POTracking />
+                </Suspense>
+              }
+            />
+            <Route
+              path="nha-cung-cap"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <NCC />
+                </Suspense>
+              }
+            />
+          </Route>
+
+          {/* Cụm giao hàng */}
+          <Route
+            path="giao-hang"
+          >
+            <Route
+              index
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <GiaoHangPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="danh-muc-van-chuyen"
+              element={
+                <Suspense fallback={<PageSkeleton />}>
+                  <DanhMucVCPage />
+                </Suspense>
+              }
+            />
           </Route>
 
           {/* Cụm Nhân sự */}
@@ -271,14 +449,6 @@ function App() {
           </Route>
 
           {/* Các mục khác mày cứ để placeholder */}
-          <Route
-            path="kho"
-            element={
-              <div className="text-white p-8 text-2xl font-bold">
-                Quản lý Kho
-              </div>
-            }
-          />
           <Route
             path="thu-chi"
             element={
