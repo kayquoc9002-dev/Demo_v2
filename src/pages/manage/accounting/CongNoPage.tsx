@@ -14,7 +14,7 @@ import type {
 } from "../../../components/ThuChi/data/accountingTypes";
 import {
   layDebtSummary, layInvoicesWithAging, layUnappliedAmounts,
-  allocate, unallocate, dinh_dang_tien,
+  allocate, unallocate,
 } from "../../../components/ThuChi/ServiceLayer/accountingService";
 import { MOCK_VOUCHERS } from "../../../components/ThuChi/data/accountingMockData";
 
@@ -41,8 +41,12 @@ const AGING_CONFIG = {
   "1_30":    { label: "Quá hạn 1-30ng",  mau: "#f59e0b", nen: "#78350f20" },
   "31_60":   { label: "Quá hạn 31-60ng", mau: "#f97316", nen: "#7c2d1220" },
   "61_90":   { label: "Quá hạn 61-90ng", mau: "#ef4444", nen: "#7f1d1d20" },
-  qua_90:    { label: "Quá hạn >90ng",   mau: "#dc2626", nen: "#450a0a20" },
+  tren_90:   { label: "Quá hạn >90ng",   mau: "#dc2626", nen: "#450a0a20" },
 };
+
+function total_qua_han(d: DebtSummary): number {
+  return d.qua_han_1_30 + d.qua_han_31_60 + d.qua_han_61_90 + d.qua_han_tren_90;
+}
 
 // ─── Lớp 3: Popup Khớp nợ ────────────────────────────────────────────────────
 
@@ -93,8 +97,8 @@ function MatchingPopup({ invoice, type, onClose, onDone }: {
       setSuccess(`Đã khớp ${fmt(amount_input)}đ${fx_gl !== 0
         ? ` · Lãi/lỗ tỷ giá: ${fx_gl > 0 ? "+" : ""}${fmt(fx_gl)}đ` : ""}`);
       setTimeout(() => { onDone(); onClose(); }, 1500);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Lỗi không xác định");
     } finally {
       setLoading(false);
     }
@@ -147,7 +151,7 @@ function MatchingPopup({ invoice, type, onClose, onDone }: {
                   <button key={u.voucher_id}
                     onClick={() => {
                       setSelVoucher(u.voucher_id);
-                      setAmountInput(Math.min(u.unapplied_amount, invoice.remaining));
+                      setAmountInput(Math.min(u.unapplied_vnd, invoice.remaining));
                     }}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all"
                     style={{
@@ -165,12 +169,12 @@ function MatchingPopup({ invoice, type, onClose, onDone }: {
                         </span>
                       </div>
                       <p className="text-[10px] truncate" style={{ color: "#475569" }}>
-                        {u.party_name}
+                        {u.doi_tuong_name}
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-xs font-black" style={{ color: "#10b981" }}>
-                        {fmt_short(u.unapplied_amount)}
+                        {fmt_short(u.unapplied_vnd)}
                       </p>
                       <p className="text-[9px]" style={{ color: "#334155" }}>
                         chưa dùng
@@ -282,15 +286,20 @@ function AgingDetail({ party, type, onClose, onRefresh }: {
   const [invoices,    setInvoices]   = useState<InvoiceWithAging[]>([]);
   const [loading,     setLoading]    = useState(true);
   const [matching,    setMatching]   = useState<InvoiceWithAging | null>(null);
+  const [refreshKey,  setRefreshKey] = useState(0);
 
-  const load = useCallback(async () => {
+  const load = useCallback(() => {
     setLoading(true);
-    const data = await layInvoicesWithAging(party.party_id, type);
-    setInvoices(data);
-    setLoading(false);
-  }, [party.party_id, type]);
+    setRefreshKey(k => k + 1);
+  }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    let active = true;
+    layInvoicesWithAging(party.party_id, type).then(data => {
+      if (active) { setInvoices(data); setLoading(false); }
+    });
+    return () => { active = false; };
+  }, [party.party_id, type, refreshKey]);
 
   const handle_unallocate = async (alloc_id: string) => {
     await unallocate(alloc_id);
@@ -325,9 +334,9 @@ function AgingDetail({ party, type, onClose, onRefresh }: {
               <span className="font-black" style={{ color: "#ef4444" }}>
                 {fmt_short(party.du_no_cuoi_ky)}
               </span>
-              {party.qua_han > 0 && (
+              {total_qua_han(party) > 0 && (
                 <span className="ml-2" style={{ color: "#ef4444" }}>
-                  · Quá hạn: {fmt_short(party.qua_han)}
+                  · Quá hạn: {fmt_short(total_qua_han(party))}
                 </span>
               )}
             </p>
@@ -497,12 +506,16 @@ export default function CongNoPage() {
     setLoading(false);
   }, [type]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { 
+    const fetchLoad = () => {
+      load();
+    }
+    fetchLoad()
+   }, [load]);
 
   const tong_no    = summaries.reduce((s, d) => s + d.du_no_cuoi_ky, 0);
-  const tong_qh    = summaries.reduce((s, d) => s + d.qua_han, 0);
-  const tong_ung   = summaries.reduce((s, d) => s + d.ung_truoc, 0);
-  const tong_unap  = unapplied.reduce((s, u) => s + u.unapplied_amount, 0);
+  const tong_qh    = summaries.reduce((s, d) => s + total_qua_han(d), 0);
+  const tong_unap  = unapplied.reduce((s, u) => s + u.unapplied_vnd, 0);
 
   return (
     <div className="flex flex-col h-full" style={{ background: "#020817" }}>
@@ -542,8 +555,8 @@ export default function CongNoPage() {
               value: fmt_short(tong_qh), mau: "#ef4444", icon: AlertTriangle },
             { label: "Tiền chưa phân bổ",
               value: fmt_short(tong_unap), mau: "#f59e0b", icon: Clock },
-            { label: type === "ar" ? "Khách ứng trước" : "Đã trả dư",
-              value: fmt_short(tong_ung), mau: "#10b981", icon: CheckCircle },
+            { label: "Trong hạn",
+              value: fmt_short(summaries.reduce((s, d) => s + d.trong_han, 0)), mau: "#10b981", icon: CheckCircle },
           ].map(({ label, value, mau, icon: Icon }) => (
             <div key={label} className="flex items-center gap-3 px-4 py-2.5 rounded-xl"
               style={{ background: "#0f172a", border: "1px solid #1e293b" }}>
@@ -594,7 +607,7 @@ export default function CongNoPage() {
               gridTemplateColumns: "200px 130px 130px 130px 130px 100px 28px",
               borderBottom: "1px solid #0f172a",
               background: i % 2 === 0 ? "transparent" : "#0f172a40",
-              borderLeft: `3px solid ${s.qua_han > 0 ? "#ef4444" : "transparent"}`,
+              borderLeft: `3px solid ${total_qua_han(s) > 0 ? "#ef4444" : "transparent"}`,
             }}
             onClick={() => setDetail(s)}>
             <p className="text-sm font-bold text-white truncate">{s.party_name}</p>
@@ -615,9 +628,9 @@ export default function CongNoPage() {
               {fmt(s.du_no_cuoi_ky)}
             </p>
             <p className="text-sm font-black text-right"
-              style={{ color: s.qua_han > 0 ? "#ef4444" : "#334155",
+              style={{ color: total_qua_han(s) > 0 ? "#ef4444" : "#334155",
                 fontVariantNumeric: "tabular-nums" }}>
-              {s.qua_han > 0 ? fmt(s.qua_han) : "—"}
+              {total_qua_han(s) > 0 ? fmt(total_qua_han(s)) : "—"}
             </p>
             <ChevronRight size={13} style={{ color: "#334155" }} />
           </div>

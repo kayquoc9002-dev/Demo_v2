@@ -190,7 +190,7 @@ export async function processReturn(req: ProcessReturnRequest): Promise<ApiResul
 // MH3 — RECONCILIATION
 // ─────────────────────────────────────────────────────────────────────────
 
-export async function importReconcileFile(fileName: string, carrierId: string): Promise<ApiResult<ImportReconcileResponse>> {
+export async function importReconcileFile(carrierId: string): Promise<ApiResult<ImportReconcileResponse>> {
   // Sau này: multipart POST /api/reconciliation/import
   await delay(800)
   const rows = [...RECONCILE_ROWS]

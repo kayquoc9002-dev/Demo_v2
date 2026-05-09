@@ -41,7 +41,7 @@ export default function DoanhThuPage() {
       {/* Tab bar */}
       <div className="flex border-b flex-shrink-0"
         style={{ borderColor: "#1e293b", background: "#0a1628" }}>
-        {TABS.map(({ id, label, icon: Icon, badge, desc }) => (
+        {TABS.map(({ id, label, icon: Icon, badge }) => (
           <button key={id} onClick={() => setTab(id)}
             className="flex items-center gap-2.5 px-6 py-3.5 text-xs font-bold transition-all relative"
             style={{

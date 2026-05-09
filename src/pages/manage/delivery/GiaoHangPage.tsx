@@ -205,8 +205,7 @@ function ReconciliationCenter() {
         ) : (
           paginated.map((row, i) => {
             const isMatch   = row.matchStatus === 'MATCHED'
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const isMissing = ['MISSING_IN_DB','MISSING_IN_FILE'].includes(row.matchStatus)
+            // const isMissing = ['MISSING_IN_DB','MISSING_IN_FILE'].includes(row.matchStatus)
             const rowColor  = MATCH_STATUS_COLORS[row.matchStatus]
             return (
               <div key={row.id}

@@ -59,10 +59,10 @@ import TabSKU from "../../../components/DanhMucSanPham/TabSKU";
 function gen_id() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function dinh_dang_tien(so: number) {
-  return so.toLocaleString("vi-VN");
-}
+
+// function dinh_dang_tien(so: number) {
+//   return so.toLocaleString("vi-VN");
+// }
 
 const EMPTY_PRODUCT: Omit<Product, "product_id" | "created_at" | "updated_at"> =
   {
@@ -165,18 +165,18 @@ function TabThongTin({
   };
   const LabelStyle = { color: "#475569" };
 
-  const cat_cha = categories.filter((c) => !c.parent_id);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cat_con = categories.filter(
-    (c) =>
-      c.parent_id ===
-      cat_cha.find(
-        (p) =>
-          categories.find((ch) => ch.category_id === product.category_id)
-            ?.parent_id === p.category_id ||
-          p.category_id === product.category_id,
-      )?.category_id,
-  );
+  // const cat_cha = categories.filter((c) => !c.parent_id);
+
+  // const cat_con = categories.filter(
+  //   (c) =>
+  //     c.parent_id ===
+  //     cat_cha.find(
+  //       (p) =>
+  //         categories.find((ch) => ch.category_id === product.category_id)
+  //           ?.parent_id === p.category_id ||
+  //         p.category_id === product.category_id,
+  //     )?.category_id,
+  // );
 
   return (
     <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1fr" }}>

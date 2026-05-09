@@ -121,7 +121,7 @@ function DonutChart({
   segments: { label: string; value: number; color: string }[];
 }) {
   const total = segments.reduce((s, sg) => s + sg.value, 0) || 1;
-  let cumPct = 0;
+  const cumPct = 0;
   const r = 36;
   const cx = 44;
   const cy = 44;
@@ -145,7 +145,7 @@ function DonutChart({
           const dash = pct * circ;
           const gap = circ - dash;
           const rotate = -90 + cumPct * 360;
-          cumPct += pct;
+          // cumPct += pct;
           return (
             <circle
               key={i}

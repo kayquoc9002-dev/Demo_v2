@@ -12,7 +12,7 @@ import {
   FileText, CheckCircle,
 } from "lucide-react";
 import type { AccountingDashboard, AgingDetail, Currency } from "../../../components/ThuChi/data/accountingTypes";
-import { layDashboardData, dinh_dang_tien } from "../../../components/ThuChi/ServiceLayer/accountingService";
+import { layDashboardData } from "../../../components/ThuChi/ServiceLayer/accountingService";
 import { MOCK_COGS_DRAFTS } from "../../../components/ThuChi/data/accountingMockData";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ function CashFlowChart({ data }: {
 
 // ─── Aging Row ────────────────────────────────────────────────────────────────
 
-function AgingRow({ item, type }: { item: AgingDetail; type: "ar" | "ap" }) {
+function AgingRow({ item }: { item: AgingDetail; type: "ar" | "ap" }) {
   const is_danger  = item.days_overdue > 60;
   const is_warning = item.days_overdue > 30;
   const mau        = is_danger ? "#ef4444" : is_warning ? "#f97316" : "#f59e0b";
@@ -312,7 +312,12 @@ export default function AccountingDashboardPage() {
     setLoading(false);
   };
 
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => { 
+    const fetchRefresh = () => {
+      refresh(); 
+    }
+    fetchRefresh()
+  }, []);
 
   if (loading || !data) {
     return (

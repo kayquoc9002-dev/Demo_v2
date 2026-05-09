@@ -357,11 +357,13 @@ export default function TabSKU({ product_id, product_code, skus, onSave, colors:
   const toggle_size = (id: string) =>
     setSelSizes(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
+  
   // Thêm màu/size mới từ modal
-  const them_mau = (item: Partial<Color>) => {
+  type SaveHandler = (item: Partial<Color> | Partial<Size>) => void;
+  const them_mau: SaveHandler = (item) => {
     setColors(prev => [...prev, item as Color]);
   };
-  const them_size = (item: Partial<Size>) => {
+  const them_size: SaveHandler = (item) => {
     setSizes(prev => [...prev, item as Size].sort((a, b) => a.sort_order - b.sort_order));
   };
 

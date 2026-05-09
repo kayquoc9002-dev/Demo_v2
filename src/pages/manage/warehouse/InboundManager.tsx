@@ -981,8 +981,8 @@ function PanelQC({
           <span className="text-center">Kết quả QC</span>
           <span>Ghi chú lỗi</span>
         </div>
-        {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-        {chi_tiet.map((ct, i) => (
+        
+        {chi_tiet.map((ct) => (
           <div
             key={ct.id}
             className="grid items-center px-4 py-3 gap-2"
@@ -2045,8 +2045,8 @@ export default function InboundManager() {
                     <span className="text-center">QC</span>
                     <span>Vị trí cất</span>
                   </div>
-                  {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-                  {selected_phieu.chi_tiet.map((ct, i) => (
+                  
+                  {selected_phieu.chi_tiet.map((ct) => (
                     <div
                       key={ct.id}
                       className="grid items-center px-6 py-3 gap-2"

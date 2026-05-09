@@ -13,7 +13,7 @@ export default function SoQuyPage() {
 
   const [refresh_key, setRefreshKey] = useState(0);
 
-  const handle_save = (v: Voucher) => {
+  const handle_save = () => {
     setForm({ open: false, type: "phieu_thu" });
     setRefreshKey(k => k + 1); // trigger VoucherList reload
   };
