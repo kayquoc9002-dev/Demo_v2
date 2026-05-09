@@ -87,7 +87,7 @@ function ReconciliationCenter() {
     const file = e.dataTransfer.files[0]
     if (!file) return
     setUploading(true)
-    const result = await importReconcileFile(file.name, 'GHTK')
+    const result = await importReconcileFile(file.name)
     setUploading(false)
     if (result.ok) {
       setRows(result.data.rows)
