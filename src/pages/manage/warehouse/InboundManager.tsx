@@ -1132,7 +1132,7 @@ function PanelPutAway({
   const scan_ref = useRef<HTMLInputElement>(null);
   const [, setSkuRules] = useState<SkuLocationRule[]>([]);
   const [nodes, setNodes] = useState<LocationNode[]>([]);
-  const [warehouse_config, setWarehouseConfig] =
+  const [, setWarehouseConfig] =
     useState<WarehouseConfig | null>(null);
 
   useEffect(() => {
@@ -1298,12 +1298,10 @@ function PanelPutAway({
         style={{ scrollbarWidth: "thin" }}
       >
         {items.map((item) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const goi_y_node = nodes.find((n) => n.id === item.node_goi_y);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const chon_node = nodes.find((n) => n.id === item.node_chon);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const levels = warehouse_config?.levels ?? [];
+          
+          // const goi_y_node = nodes.find((n) => n.id === item.node_goi_y);
+          // const chon_node = nodes.find((n) => n.id === item.node_chon);
+          // const levels = warehouse_config?.levels ?? [];
 
           return (
             <div

@@ -711,8 +711,7 @@ function TabDanhMuc() {
 
               {/* Danh mục con */}
               
-              {// eslint-disable-next-line @typescript-eslint/no-unused-vars
-              children.map((child, i) => (
+              {children.map((child) => (
                 <div key={child.category_id}
                   className="flex items-center gap-3 px-4 py-2.5 pl-10"
                   style={{ borderTop: "1px solid #0f172a" }}>

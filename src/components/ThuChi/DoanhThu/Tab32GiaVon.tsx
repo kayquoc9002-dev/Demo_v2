@@ -304,11 +304,6 @@ export default function Tab32GiaVon() {
 
   const tong_draft    = cogs_list.filter(c => c.status === "draft").reduce((s, c) => s + c.total_cogs, 0);
   const tong_approved = cogs_list.filter(c => c.status === "approved").reduce((s, c) => s + c.total_cogs, 0);
-  const co_bat_thuong = cogs_list.some(c => {
-    const dm = c.lines.reduce((s, l) => s + l.so_luong_dinh_muc * l.don_gia_binh_quan, 0);
-    return dm > 0 && ((c.total_cogs - dm) / dm * 100) > HAO_HUT_THRESHOLD;
-  });
-
   const handle_confirm = (note: string) => {
     if (!confirm) return;
     const { cogs, action } = confirm;

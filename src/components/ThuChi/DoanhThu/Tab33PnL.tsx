@@ -29,14 +29,13 @@ function pct_thay_doi(cur: number, prev: number): number {
 
 // ─── P&L Line Row ─────────────────────────────────────────────────────────────
 
-function PLLineRow({ label, value, mau, is_subtotal, indent = 0, prev_value, show_pct = false }: {
+function PLLineRow({ label, value, mau, is_subtotal, indent = 0, prev_value }: {
   label:       string;
   value:       number;
   mau?:        string;
   is_subtotal?: boolean;
   indent?:     number;
   prev_value?: number;
-  show_pct?:   boolean;
 }) {
   const change_pct = prev_value !== undefined ? pct_thay_doi(value, prev_value) : null;
 

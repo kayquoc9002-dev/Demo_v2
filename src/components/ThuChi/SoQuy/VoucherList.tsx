@@ -13,7 +13,7 @@ import {
 import type { Voucher, VoucherType, BankAccount } from "../data/accountingTypes";
 import {
   layDanhSachVoucher, layDanhSachTaiKhoan,
-  xoaVoucher, guiDuyetVoucher, dinh_dang_tien,
+  xoaVoucher, guiDuyetVoucher,
 } from "../ServiceLayer/accountingService";
 // import { MOCK_ACCOUNTS } from "./SoQuy/data/accountingMockData";
 

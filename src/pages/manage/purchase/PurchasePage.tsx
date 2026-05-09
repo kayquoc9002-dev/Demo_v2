@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { ClipboardList, ShoppingCart, BarChart2 } from "lucide-react";
-import type { PRItem, PurchaseOrder } from "../../../components/MuaHang/data/purchaseTypes";
+import type { PRItem } from "../../../components/MuaHang/data/purchaseTypes";
 import TabPRApproval     from "../../../components/MuaHang/PRApproval";
 import TabPOConsolidation from "../../../components/MuaHang/POConsolidation";
 import TabPOTracking     from "../../../components/MuaHang/POTracking";
@@ -22,7 +22,7 @@ export default function PurchasePage() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handle_tao_po = (po: PurchaseOrder) => {
+  const handle_tao_po = () => {
     setBadgeTab2(prev => Math.max(0, prev - 1));
     setBadgeTab3(prev => prev + 1);
     setActiveTab("po_tracking");
@@ -66,8 +66,8 @@ export default function PurchasePage() {
       {/* Tab bar */}
       <div className="flex border-b flex-shrink-0"
         style={{ borderColor: "#1e293b", background: "#0a1628" }}>
-        { // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        TABS.map(({ id, label, icon: Icon, badge, desc }) => (
+        {
+        TABS.map(({ id, label, icon: Icon, badge }) => (
           <button key={id} onClick={() => setActiveTab(id)}
             className="flex items-center gap-2.5 px-6 py-3.5 text-xs font-bold transition-all relative"
             style={{

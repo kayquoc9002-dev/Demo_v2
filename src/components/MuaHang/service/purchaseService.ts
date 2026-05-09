@@ -176,7 +176,7 @@ export async function taoPO(
 
   // Xóa các approved items đã tạo PO
   const sku_ids = new Set(items.map(i => i.sku_id));
-  MOCK_APPROVED_ITEMS.forEach((item, idx) => {
+  MOCK_APPROVED_ITEMS.forEach((item) => {
     item.skus = item.skus.filter(s => !sku_ids.has(s.sku_id));
   });
   // Xóa ApprovedItem rỗng

@@ -30,7 +30,7 @@ function useAudio() {
       gain.gain.setValueAtTime(vol, c.currentTime)
       gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur)
       osc.start(c.currentTime); osc.stop(c.currentTime + dur)
-    } catch {}
+    } catch{ console.log("Error") }
   }, [])
   const success = useCallback(() => { beep(880, 0.1); setTimeout(() => beep(1100, 0.1), 100) }, [beep])
   const error   = useCallback(() => { beep(200, 0.15, 0.5, 'square'); setTimeout(() => beep(180, 0.15, 0.5, 'square'), 180); setTimeout(() => beep(160, 0.2, 0.5, 'square'), 360) }, [beep])

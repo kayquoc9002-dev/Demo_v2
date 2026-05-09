@@ -4,7 +4,6 @@
 
 import type {
   PhieuNhapKho,
-  ChiTietPhieuNhap,
   PhieuNhapStats,
   TrangThaiPhieuNhap,
   PutAwayItem,

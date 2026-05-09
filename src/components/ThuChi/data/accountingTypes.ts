@@ -355,48 +355,6 @@ export interface PaymentAllocation {
   created_by:     string;
 }
  
-// Tổng hợp công nợ theo khách hàng/NCC
-export interface DebtSummary {
-  party_id:       string;
-  party_name:     string;
-  party_type:     "khach_hang" | "ncc";
-  du_no_dau_ky:   number;   // Tồn từ kỳ trước
-  phat_sinh_tang: number;   // Hóa đơn mới trong kỳ
-  phat_sinh_giam: number;   // Đã thanh toán trong kỳ
-  du_no_cuoi_ky:  number;   // = dau_ky + tang - giam
-  qua_han:        number;   // Trong du_no_cuoi_ky bao nhiêu là quá hạn
-  ung_truoc:      number;   // Tiền khách trả dư / mình nợ lại
-}
- 
-// Chi tiết 1 invoice với aging bucket
-export interface InvoiceWithAging {
-  invoice_id:    string;
-  invoice_code:  string;
-  issue_date:    string;
-  due_date:      string;
-  total_amount:  number;
-  paid_amount:   number;
-  remaining:     number;
-  currency:      Currency;
-  exchange_rate: number;
-  status:        string;
-  days_overdue:  number;    // Tính động: today - due_date
-  aging_bucket:  "trong_han" | "1_30" | "31_60" | "61_90" | "qua_90";
-  allocations:   PaymentAllocation[];
-}
- 
-// Unapplied — tiền thu/chi chưa khớp với hóa đơn nào
-export interface UnappliedAmount {
-  voucher_id:       string;
-  voucher_code:     string;
-  party_name:       string;
-  total_amount:     number;
-  applied_amount:   number;
-  unapplied_amount: number;  // = total - applied
-  currency:         Currency;
-  payment_date:     string;
-}
- 
 // ─── NHÓM 7: Công nợ — Khớp nợ ──────────────────────────────────────────────
  
 export interface PaymentAllocation {

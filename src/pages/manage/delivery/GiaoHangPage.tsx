@@ -399,7 +399,12 @@ function ShipmentKanban() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { loadBoard() }, [loadBoard])
+  useEffect(() => { 
+    const fetchBoard = () => {
+        loadBoard()
+    }
+    fetchBoard();
+   }, [loadBoard])
 
   // Real-time: WebSocket / polling fallback
   useShippingSocket({

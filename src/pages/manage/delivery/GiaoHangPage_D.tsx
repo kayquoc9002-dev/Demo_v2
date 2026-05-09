@@ -165,13 +165,13 @@ function BarChart({ data }: { data: ShippingReport['shippingFee']['byCarrier'] }
 function DonutChart({ data }: { data: ShippingReport['shippingFee']['byCarrier'] }) {
   const total  = data.reduce((s, d) => s + d.count, 0)
   const R      = 50, cx = 80, cy = 65, rInner = 28
-  let angle    = -Math.PI / 2
+  const angle    = -Math.PI / 2
 
   const slices = data.map(d => {
     const frac  = d.count / total
     const start = angle
-    angle += frac * 2 * Math.PI
-    return { ...d, frac, start, end: angle }
+    const end = angle + frac * 2 * Math.PI
+    return { ...d, frac, start, end }
   })
 
   const arc = (s: number, e: number) => {
@@ -356,12 +356,15 @@ export function BaoCaoScreen() {
   const [showPeriod, setShowPeriod] = useState(false)
 
   useEffect(() => {
-    setLoading(true)
-    const { from, to } = periodRange(period)
-    getShippingReport(from, to).then(r => {
-      if (r.ok) setReport(r.data)
-      setLoading(false)
-    })
+    const fetchReport = () => {
+        setLoading(true)
+        const { from, to } = periodRange(period)
+        getShippingReport(from, to).then(r => {
+            if (r.ok) setReport(r.data)
+            setLoading(false)
+        })
+    }
+    fetchReport()
   }, [period])
 
   return (

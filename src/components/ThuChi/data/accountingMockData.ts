@@ -5,7 +5,7 @@
 import type {
   BankAccount, TransactionCategory, CostCenter,
   DailyExchangeRate, ApprovalRule, Voucher,
-  Invoice, Bill, Payment, CogsDraft, CashFlowForecast,
+  Invoice, Bill, CogsDraft, CashFlowForecast,
 } from "./accountingTypes";
 
 // ─── Tài khoản ngân hàng ──────────────────────────────────────────────────────
@@ -499,12 +499,13 @@ export const MOCK_VOUCHERS: Voucher[] = [
 
 // ─── Payment Allocations ──────────────────────────────────────────────────────
  
-export const MOCK_ALLOCATIONS: import("../accountingTypes").PaymentAllocation[] = [
+export const MOCK_ALLOCATIONS: import("./accountingTypes").PaymentAllocation[] = [
   {
     // PT-2604-001 (570tr từ H&M) → khớp với inv-2 (H&M còn nợ 570tr)
     allocation_id:  "alloc-1",
     voucher_id:     "v-1",
     invoice_id:     "inv-2",
+    invoice_type:   "ar" as const,
     applied_amount: 570375000,
     applied_fx:     22500,
     rate_invoice:   25350,   // tỷ giá lúc xuất HĐ

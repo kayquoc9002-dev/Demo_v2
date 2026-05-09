@@ -152,7 +152,6 @@ function OrderDetailModal({ order, onClose, onDone }: {
                   <span className="text-right">Thành tiền</span>
                 </div>
                 {order.items.map((item, i) => {
-                  const item_margin = ((item.price - item.cost) / item.price * 100);
                   const is_loss_item = item.price < item.cost;
                   return (
                     <div key={i} className="grid items-center px-4 py-2.5 gap-2"

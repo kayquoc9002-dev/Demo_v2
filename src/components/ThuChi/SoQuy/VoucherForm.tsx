@@ -15,7 +15,6 @@ import type {
 import {
   layDanhSachTaiKhoan, layDanhSachHangMuc, layDanhSachCostCenter,
   layTyGiaHomNay, taoVoucher, capNhatVoucher,
-  genVoucherCode, dinh_dang_tien,
 } from "../ServiceLayer/accountingService";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -78,7 +77,7 @@ export default function VoucherForm({ type, voucher, onSave, onClose }: VoucherF
   // Master data
   const [accounts,    setAccounts]   = useState<BankAccount[]>([]);
   const [categories,  setCategories] = useState<TransactionCategory[]>([]);
-  const [centers,     setCenters]    = useState<CostCenter[]>([]);
+  const [,            setCenters]    = useState<CostCenter[]>([]);
 
   // Header state
   const [account_id,      setAccountId]     = useState(voucher?.account_id ?? "");

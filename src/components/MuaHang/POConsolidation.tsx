@@ -515,10 +515,10 @@ function VendorCard({ cart, onTaoPO, onUpdate }: {
 // ─── Main Tab ─────────────────────────────────────────────────────────────────
 
 interface TabPOConsolidationProps {
-  onTaoPO: (po: PurchaseOrder) => void;
+  onTaoPO?: (po: PurchaseOrder) => void;
 }
 
-export default function TabPOConsolidation({ onTaoPO }: TabPOConsolidationProps) {
+export default function TabPOConsolidation({ onTaoPO = () => {} }: TabPOConsolidationProps) {
   const [carts, setCarts] = useState<VendorCart[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -551,7 +551,12 @@ export default function TabPOConsolidation({ onTaoPO }: TabPOConsolidationProps)
     setLoading(false);
   };
 
-  useEffect(() => { load_data(); }, []);
+  useEffect(() => { 
+    const fetchLoadData = () => {
+      load_data(); 
+    }
+    fetchLoadData()
+  }, []);
 
   const handle_update = (vendor_id: string, skus: CartSKU[]) => {
     setCarts(prev => prev.map(c =>

@@ -7,7 +7,7 @@
 // UI components chỉ import từ file này — không import MOCK_DON_HANG trực tiếp
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { DonHang, TrangThaiDon, VaiTro } from "../../BanHang/data/orderData";
+import type { DonHang, TrangThaiDon } from "../../BanHang/data/orderData";
 import { MOCK_DON_HANG } from "../../BanHang/data/orderData";
 
 // ─── Lấy danh sách ───────────────────────────────────────────────────────────
@@ -102,8 +102,7 @@ export async function layThongKeDonHang(): Promise<{
 }
 
 // ─── Phân quyền ──────────────────────────────────────────────────────────────
- // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function layDonHangTheoVaiTro(vai_tro: VaiTro): Promise<DonHang[]> {
+export async function layDonHangTheoVaiTro(): Promise<DonHang[]> {
   return MOCK_DON_HANG;
   // Sau này: return fetch(`/api/orders?view=${vai_tro}`).then(r => r.json());
   // Backend sẽ tự lọc fields theo vai_tro — FE không cần biết logic ẩn field

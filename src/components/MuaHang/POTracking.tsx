@@ -104,7 +104,7 @@ function PODrawer({ po, onClose, onRefresh }: {
   const tong_nhan = po.items.reduce((s, i) => s + i.so_luong_nhan, 0);
   const tong_tien = po.items.reduce((s, i) => s + i.thanh_tien,    0);
   const tre       = la_tre_han(po);
-  const cfg       = tre ? TRANG_THAI_PO_CONFIG["tre_han"] : TRANG_THAI_PO_CONFIG[po.trang_thai];
+  // const cfg       = tre ? TRANG_THAI_PO_CONFIG["tre_han"] : TRANG_THAI_PO_CONFIG[po.trang_thai];
 
   const handle_dong_po = async () => {
     if (!ly_do_dong.trim()) return;
@@ -371,7 +371,12 @@ export default function TabPOTracking() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { 
+    const fetchLoad = () => {
+      load();
+    }
+    fetchLoad()
+   }, []);
 
   // Filter
   const filtered = po_list.filter(po => {

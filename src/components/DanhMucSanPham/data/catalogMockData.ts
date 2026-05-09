@@ -6,7 +6,7 @@ import type {
   Category, Season, Color, Size,
   Product, ProductSKU, VolumePricing,
   ProductAttachment, AuditLog,
-} from "./catalogTypes";
+} from "../catalogTypes";
 
 // ─── Master Data ──────────────────────────────────────────────────────────────
 

@@ -12,15 +12,13 @@ import {
   Package,
   ChevronDown,
 } from "lucide-react";
-import { layTatCaDonHang } from "../../Kho/ServiceLayer/orderService";
+import { layTatCaDonHang, capNhatTrangThaiDon,  } from "../../Kho/ServiceLayer/orderService";
 import {
   TRANG_THAI_DON_CONFIG,
   TRANG_THAI_TT_CONFIG,
   KENH_BAN_CONFIG,
   dinh_dang_tien,
   dinh_dang_ngay_ngan,
-  co_quyen_thao_tac,
-  cap_nhat_trang_thai_don,
   type DonHang,
   type TrangThaiDon,
   type TrangThaiThanhToan,
@@ -32,6 +30,11 @@ import { ModalChiTiet, BadgeDon, BadgeTT } from "./OrderModals";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PAGE_SIZE = 8;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function co_quyen_thao_tac(vai_tro: VaiTro, ..._args: string[]): boolean {
+  return vai_tro === "admin" || vai_tro === "sale";
+}
 
 // Mock vai trò hiện tại — sau thay bằng auth context
 const VAI_TRO_HIEN_TAI: VaiTro = "admin";
@@ -153,22 +156,19 @@ export default function XuLyDonHang() {
   const [kenh, setKenh] = useState<KenhBan | "tat_ca">("tat_ca");
   const [loai_khach, setLoaiKhach] = useState<"le" | "si" | "tat_ca">("tat_ca");
   const [khoang_tg, setKhoangTG] = useState<KhoangThoiGian>("thang_nay");
-  const [ngay_tu, setNgayTu] = useState("");
-  const [ngay_den, setNgayDen] = useState("");
+  const [ngay_tu, setNgayTu] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+  });
+  const [ngay_den, setNgayDen] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
+  });
   const [sap_xep, setSapXep] = useState<"ngay_tao" | "tong_cong">("ngay_tao");
   const [chieu, setChieu] = useState<"asc" | "desc">("desc");
   const [trang, setTrang] = useState(1);
   const [mo_filter, setMoFilter] = useState(false);
   const [don_chon, setDonChon] = useState<DonHang | null>(null);
-
-  // Đặt ngày mặc định cho tháng này
-  useEffect(() => {
-    const now = new Date();
-    const dau = new Date(now.getFullYear(), now.getMonth(), 1);
-    const cuoi = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    setNgayTu(dau.toISOString().slice(0, 10));
-    setNgayDen(cuoi.toISOString().slice(0, 10));
-  }, []);
 
   // ── Lọc + sắp xếp ───────────────────────────────────────────────────────────
   const ds_loc = useMemo(() => {
@@ -761,7 +761,7 @@ export default function XuLyDonHang() {
                     cfg_don.trang_thai_tiep_theo[0] !== "da_huy" && (
                       <button
                         onClick={() =>
-                          cap_nhat_trang_thai_don(
+                          capNhatTrangThaiDon(
                             don.id,
                             cfg_don.trang_thai_tiep_theo[0],
                           ).then(cap_nhat_don)

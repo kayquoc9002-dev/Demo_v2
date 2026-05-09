@@ -55,12 +55,13 @@ export function tinh_canh_bao_ton_kho(
     .map((rule) => {
       const key = `${rule.node_id}:${rule.ma_sku}`;
       const ton_hien = ton_kho_map[key] ?? 0;
-      const loai =
+      const loai = (
         ton_hien < rule.dinh_muc_min
           ? "thieu"
           : ton_hien > rule.dinh_muc_max
             ? "thua"
-            : "du";
+            : "du"
+      ) as "thieu" | "du" | "thua";
       const chenh_lech =
         loai === "thieu"
           ? rule.dinh_muc_min - ton_hien
@@ -217,11 +218,9 @@ export function lay_canh_bao_dashboard(
         dinh_muc_max: cb.dinh_muc_max,
         thieu: Math.max(0, cb.dinh_muc_min - cb.ton_kho_hien_tai),
         muc_do:
-          cb.loai === "het_hang"
-            ? "het_hang"
-            : cb.muc_do === "nguy_hiem"
-              ? "nguy_hiem"
-              : "canh_bao",
+          cb.loai === "thieu" && cb.chenh_lech >= cb.dinh_muc_min
+            ? "nguy_hiem"
+            : "canh_bao",
       };
     });
 }

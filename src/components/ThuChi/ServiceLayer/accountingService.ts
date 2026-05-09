@@ -180,7 +180,6 @@ export async function layAgingReport(type: "ar" | "ap"): Promise<AgingReport> {
   ];
   const details: AgingDetail[] = [];
 
-  const items = type === "ar" ? MOCK_INVOICES : MOCK_BILLS;
   const unpaid = type === "ar"
     ? (MOCK_INVOICES as Invoice[]).filter(i => i.status !== "paid" && i.remaining > 0)
     : (MOCK_BILLS as Bill[]).filter(b => b.status !== "paid" && b.remaining > 0);
@@ -531,7 +530,7 @@ function tinh_aging_bucket(due_date: string): InvoiceWithAging["aging_bucket"] {
   if (days <= 30) return "1_30";
   if (days <= 60) return "31_60";
   if (days <= 90) return "61_90";
-  return "qua_90";
+  return "tren_90";
 }
  
 function tinh_days_overdue(due_date: string): number {
@@ -550,18 +549,18 @@ export async function layInvoicesWithAging(
     : MOCK_BILLS.filter(b => b.vendor_id === customer_id && b.status !== "paid");
  
   return list.map(item => {
-    const due     = "due_date" in item ? item.due_date : (item as any).due_date;
-    const allocs  = MOCK_ALLOCATIONS.filter(a =>
-      "invoice_id" in item
-        ? a.invoice_id === (item as any).invoice_id
-        : a.bill_id   === (item as any).bill_id
-    );
+    const doc  = item as unknown as { due_date: string; invoice_id?: string; bill_id?: string; invoice_code?: string; bill_code?: string };
+    const due  = doc.due_date;
+    const id   = doc.invoice_id ?? doc.bill_id ?? "";
+    const code = doc.invoice_code ?? doc.bill_code ?? "";
+    const allocs = MOCK_ALLOCATIONS.filter(a => a.invoice_id === id);
     return {
-      invoice_id:    (item as any).invoice_id ?? (item as any).bill_id,
-      invoice_code:  (item as any).invoice_code ?? (item as any).bill_code,
+      invoice_id:    id,
+      invoice_code:  code,
       issue_date:    item.issue_date,
       due_date:      due,
       total_amount:  item.total_vnd,
+      total_vnd:     item.total_vnd,
       paid_amount:   item.paid_amount,
       remaining:     item.remaining,
       currency:      item.currency,
@@ -606,20 +605,21 @@ export async function layDebtSummary(
       const du_cuoi     = invs
         .filter(i => i.status !== "paid")
         .reduce((s, i) => s + i.remaining, 0);
-      const qua_han     = invs
-        .filter(i => i.status !== "paid" && tinh_days_overdue(i.due_date) > 0)
-        .reduce((s, i) => s + i.remaining, 0);
- 
+      const unpaid = invs.filter(i => i.status !== "paid");
       return {
-        party_id:       cid,
-        party_name:     first.customer_name,
-        party_type:     "khach_hang" as const,
-        du_no_dau_ky:   du_dau,
-        phat_sinh_tang: phat_tang,
-        phat_sinh_giam: phat_giam,
-        du_no_cuoi_ky:  du_cuoi,
-        qua_han,
-        ung_truoc:      0,
+        party_id:        cid,
+        party_name:      first.customer_name,
+        party_type:      "khach_hang" as const,
+        currency:        first.currency,
+        du_no_dau_ky:    du_dau,
+        phat_sinh_tang:  phat_tang,
+        phat_sinh_giam:  phat_giam,
+        du_no_cuoi_ky:   du_cuoi,
+        trong_han:       unpaid.filter(i => tinh_days_overdue(i.due_date) <= 0).reduce((s, i) => s + i.remaining, 0),
+        qua_han_1_30:    unpaid.filter(i => { const d = tinh_days_overdue(i.due_date); return d > 0 && d <= 30; }).reduce((s, i) => s + i.remaining, 0),
+        qua_han_31_60:   unpaid.filter(i => { const d = tinh_days_overdue(i.due_date); return d > 30 && d <= 60; }).reduce((s, i) => s + i.remaining, 0),
+        qua_han_61_90:   unpaid.filter(i => { const d = tinh_days_overdue(i.due_date); return d > 60 && d <= 90; }).reduce((s, i) => s + i.remaining, 0),
+        qua_han_tren_90: unpaid.filter(i => tinh_days_overdue(i.due_date) > 90).reduce((s, i) => s + i.remaining, 0),
       };
     }).sort((a, b) => b.du_no_cuoi_ky - a.du_no_cuoi_ky);
   } else {
@@ -635,19 +635,21 @@ export async function layDebtSummary(
       const du_cuoi   = bills
         .filter(b => b.status !== "paid")
         .reduce((s, b) => s + b.remaining, 0);
-      const qua_han   = bills
-        .filter(b => b.status !== "paid" && tinh_days_overdue(b.due_date) > 0)
-        .reduce((s, b) => s + b.remaining, 0);
+      const unpaidB = bills.filter(b => b.status !== "paid");
       return {
-        party_id:       vid,
-        party_name:     first.vendor_name,
-        party_type:     "ncc" as const,
-        du_no_dau_ky:   0,
-        phat_sinh_tang: bills.reduce((s, b) => s + b.total_vnd, 0),
-        phat_sinh_giam: bills.reduce((s, b) => s + b.paid_amount, 0),
-        du_no_cuoi_ky:  du_cuoi,
-        qua_han,
-        ung_truoc:      0,
+        party_id:        vid,
+        party_name:      first.vendor_name,
+        party_type:      "ncc" as const,
+        currency:        first.currency,
+        du_no_dau_ky:    0,
+        phat_sinh_tang:  bills.reduce((s, b) => s + b.total_vnd, 0),
+        phat_sinh_giam:  bills.reduce((s, b) => s + b.paid_amount, 0),
+        du_no_cuoi_ky:   du_cuoi,
+        trong_han:       unpaidB.filter(b => tinh_days_overdue(b.due_date) <= 0).reduce((s, b) => s + b.remaining, 0),
+        qua_han_1_30:    unpaidB.filter(b => { const d = tinh_days_overdue(b.due_date); return d > 0 && d <= 30; }).reduce((s, b) => s + b.remaining, 0),
+        qua_han_31_60:   unpaidB.filter(b => { const d = tinh_days_overdue(b.due_date); return d > 30 && d <= 60; }).reduce((s, b) => s + b.remaining, 0),
+        qua_han_61_90:   unpaidB.filter(b => { const d = tinh_days_overdue(b.due_date); return d > 60 && d <= 90; }).reduce((s, b) => s + b.remaining, 0),
+        qua_han_tren_90: unpaidB.filter(b => tinh_days_overdue(b.due_date) > 90).reduce((s, b) => s + b.remaining, 0),
       };
     }).sort((a, b) => b.du_no_cuoi_ky - a.du_no_cuoi_ky);
   }
@@ -664,16 +666,16 @@ export async function layUnappliedAmounts(type: "ar" | "ap" = "ar"): Promise<Una
       .filter(a => a.voucher_id === v.voucher_id)
       .reduce((s, a) => s + a.applied_amount, 0);
     return {
-      voucher_id:       v.voucher_id,
-      voucher_code:     v.voucher_code,
-      party_name:       v.doi_tuong_name,
-      total_amount:     v.total_vnd,
-      applied_amount:   applied,
-      unapplied_amount: v.total_vnd - applied,
-      currency:         v.currency,
+      voucher_id:     v.voucher_id,
+      voucher_code:   v.voucher_code,
+      doi_tuong_name: v.doi_tuong_name,
+      total_vnd:      v.total_vnd,
+      applied_vnd:    applied,
+      unapplied_vnd:  v.total_vnd - applied,
+      currency:       v.currency,
       payment_date:     v.accounting_date,
     };
-  }).filter(u => u.unapplied_amount > 0);
+  }).filter(u => u.unapplied_vnd > 0);
 }
  
 // ─── Allocation (Khớp nợ) ────────────────────────────────────────────────────
@@ -718,6 +720,7 @@ export async function allocate(params: {
     allocation_id:  gen_id(),
     voucher_id,
     invoice_id,
+    invoice_type:   "ar",
     applied_amount,
     applied_fx,
     rate_invoice:   invoice.exchange_rate,

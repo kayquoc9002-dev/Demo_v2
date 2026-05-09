@@ -1,5 +1,5 @@
 // DonViVanChuyenPage.tsx
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Search, Plus, Filter, X, ArrowLeft, Edit2, Copy, Check,
   AlertTriangle, Trash2, Phone, Mail, MessageCircle,
@@ -131,8 +131,7 @@ const iStyle = (err?: string): React.CSSProperties => ({
 const selStyle: React.CSSProperties = { background: '#1e293b', border: '1px solid #334155', color: 'white' };
 
 // ── Status icon ───────────────────────────────────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function StatusIcon({ status }: { status: CarrierStatus }) {
+export function StatusIcon({ status }: { status: CarrierStatus }) {
   if (status === 'active')    return <Wifi size={13} style={{ color: '#10b981' }} />;
   if (status === 'api_error') return <WifiOff size={13} style={{ color: '#ef4444' }} />;
   return <WifiOff size={13} style={{ color: '#64748b' }} />;
@@ -154,8 +153,6 @@ function CarrierCard({
 }) {
   const [showPhone, setShowPhone] = useState(false);
   const primaryContact = carrier.contacts.find(c => c.role === 'account_manager') ?? carrier.contacts[0];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const catColor = CARRIER_STATUS_COLORS[carrier.status];
   const successRate = pct(carrier.stats.successOrders, carrier.stats.totalOrders);
   const returnRate  = pct(carrier.stats.returnedOrders, carrier.stats.totalOrders);
 
@@ -338,13 +335,11 @@ function CarrierList({ onSelect, onCreateNew }: {
   onSelect: (id: string) => void;
   onCreateNew: () => void;
 }) {
-  const [carriers, setCarriers] = useState<Carrier[]>([]);
   const [filters, setFilters] = useState<CarrierFilter>({ type: 'all', status: 'all', region: 'all', service: 'all' });
   const [showFilters, setShowFilters] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
-
-  const reload = useCallback(() => setCarriers(filterCarriers(filters)), [filters]);
-  useEffect(() => { reload(); }, [reload]);
+  const carriers = useMemo<Carrier[]>(() => filterCarriers(filters), [filters]);
+  const reload = useCallback(() => setFilters(f => ({ ...f })), []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setF = (k: keyof CarrierFilter, v: any) => setFilters(prev => ({ ...prev, [k]: v }));
@@ -1084,12 +1079,14 @@ function CarrierDetail({ carrierId, onBack, onEdit }: {
     setTesting(false);
   };
 
+  const [now] = useState(() => Date.now());
+
   if (!carrier) return null;
 
   const sc = pct(carrier.stats.successOrders, carrier.stats.totalOrders);
   const rc = pct(carrier.stats.returnedOrders, carrier.stats.totalOrders);
   const contractExpiring = carrier.contractExpiresAt
-    ? (new Date(carrier.contractExpiresAt).getTime() - Date.now()) / 86400000 < 60
+    ? (new Date(carrier.contractExpiresAt).getTime() - now) / 86400000 < 60
     : false;
 
   return (

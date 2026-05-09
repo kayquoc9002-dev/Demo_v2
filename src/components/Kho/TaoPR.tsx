@@ -176,7 +176,7 @@ function ModalTaoPR({ onClose }: { onClose: () => void }) {
                     </span>
                   )}
                   {sel_sku && (
-                    <button onClick={e => { e.stopPropagation(); setSelSku(null); setSearch(""); }}
+                    <button onClick={e => { e.stopPropagation(); setSelSku(undefined); setSearch(""); }}
                       style={{ color: "#475569" }}>
                       <X size={12} />
                     </button>

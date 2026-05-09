@@ -78,7 +78,7 @@ export function useShippingSocket({
         const ws = new WebSocket(WS_URL)
         wsRef.current = ws
         ws.onopen    = () => updateStatus('connected')
-        ws.onmessage = (e) => { try { onEventRef.current(JSON.parse(e.data)) } catch {} }
+        ws.onmessage = (e) => { try { onEventRef.current(JSON.parse(e.data)) } catch {console.log()} }
         ws.onerror   = () => startPolling()
         ws.onclose   = () => { updateStatus('disconnected'); setTimeout(() => startPolling(), 5_000) }
       } catch { startPolling() }

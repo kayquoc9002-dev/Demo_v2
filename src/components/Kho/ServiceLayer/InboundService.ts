@@ -44,7 +44,7 @@ export async function capNhatPhieuNhap(phieu: PhieuNhapKho): Promise<PhieuNhapKh
 
 export async function capNhatKetQuaQC(
   phieu_id:  string,
-  chi_tiet:  ChiTietPhieuNhap[]
+  _chi_tiet: ChiTietPhieuNhap[]
 ): Promise<void> {
   console.log("[inboundService] capNhatKetQuaQC", phieu_id);
   // Sau này:

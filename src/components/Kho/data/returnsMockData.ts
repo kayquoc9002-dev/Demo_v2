@@ -4,9 +4,6 @@
 
 import type { PhieuHangHoan, PhieuSuCo } from "./returnsTypes";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const NOW = new Date().toISOString();
-
 // ─── Phiếu hàng hoàn từ ĐVVC ─────────────────────────────────────────────────
 
 export const MOCK_PHIEU_HANG_HOAN: PhieuHangHoan[] = [

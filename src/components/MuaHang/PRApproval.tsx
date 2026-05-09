@@ -12,8 +12,8 @@ import {
 import type { PRItem, PRItemSKU } from "./data/purchaseTypes";
 import { LY_DO_PR_CONFIG } from "./data/purchaseTypes";
 import {
-  layDanhSachPR, duyetPR, tuChoiPR,
-  tinh_tong_duyet, dinh_dang_tien, la_hang_loi_mua,
+  layDanhSachPR, duyetPR,
+  tinh_tong_duyet, la_hang_loi_mua,
 } from "./service/purchaseService";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ function SKURow({ sku, onChange, la_loi_mua }: {
   onChange:   (sku_id: string, val: number) => void;
   la_loi_mua: boolean;
 }) {
-  const toc_do = format_toc_do(sku.toc_do_ban);
+  // const toc_do = format_toc_do(sku.toc_do_ban);
 
   return (
     <div className="grid items-center px-4 py-2.5 gap-2 group"
@@ -213,7 +213,6 @@ function ProductRow({ item, expanded, selected, onToggle, onSelect, onSkuChange 
   const tong_duyet = tinh_tong_duyet(item.skus);
   const toc_do     = format_toc_do(item.toc_do_ban);
   const loi_mua    = la_hang_loi_mua(item.season_code);
-  const ly_do_cfg  = LY_DO_PR_CONFIG[item.ly_do];
 
   return (
     <>
@@ -347,10 +346,10 @@ function ProductRow({ item, expanded, selected, onToggle, onSelect, onSkuChange 
 // ─── Main Tab ─────────────────────────────────────────────────────────────────
 
 interface TabPRApprovalProps {
-  onDuyet: (items: PRItem[]) => void; // callback khi duyệt → chuyển sang Tab 2
+  onDuyet?: (items: PRItem[]) => void; // callback khi duyệt → chuyển sang Tab 2
 }
 
-export default function TabPRApproval({ onDuyet }: TabPRApprovalProps) {
+export default function TabPRApproval({ onDuyet = () => {} }: TabPRApprovalProps) {
   const [items,       setItems]      = useState<PRItem[]>([]);
   const [loading,     setLoading]    = useState(true);
   const [expanded,    setExpanded]   = useState<Set<string>>(new Set());
@@ -431,10 +430,6 @@ export default function TabPRApproval({ onDuyet }: TabPRApprovalProps) {
 
   const so_da_chon    = selected.size;
   const so_co_duyet   = items.filter(i => selected.has(i.pr_id) && tinh_tong_duyet(i.skus) > 0).length;
-  const tong_tien_tam = items
-    .filter(i => selected.has(i.pr_id))
-    .reduce((total, item) => total + item.skus.reduce((s, sku) => s + sku.so_luong_duyet * 0, 0), 0);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
